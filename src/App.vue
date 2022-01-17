@@ -1,33 +1,57 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link>
-      |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view />
+  <div class="to-do-list">
+    <MenubarComponent style="flex-shrink: 0"></MenubarComponent>
+    <AuthGuard>
+      <router-view v-if="!isReload"></router-view>
+    </AuthGuard>
   </div>
 </template>
 
-<style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+<script lang="ts">
+import { BaseVue } from "@/base/view/BaseVue";
+import Component from "vue-class-component";
+import { AuthGuard } from "@/components/AuthGuard";
+import MenubarComponent from "@/components/Menubar/Menubar.component.vue";
+import { MyLogger } from "@/base/utils/MyLogger";
+import { Browser } from "@/base/utils/Browser";
+import { State } from "vuex-class";
 
-#nav {
-  padding: 30px;
+@Component({
+  components: {
+    AuthGuard,
+    MenubarComponent,
+  },
+})
+export default class App extends BaseVue {
+  @State("ElementUI/isReload")
+  private isReload!: boolean;
 
-  a {
-    font-weight: bold;
-    color: #2c3e50;
+  private isReady = false;
 
-    &.router-link-exact-active {
-      color: #42b983;
+  async mounted() {
+    // wait vue to prepare the router...
+    await this.$nextTick();
+    try {
+      const search = window.location.search;
+      MyLogger.debug(`search: ${search}`);
+      const query = Browser.getCurrentQueryString();
+
+      // 一些共用資料先 load
+      // await this.initApp();
+      //
+    } catch (error) {
+      throw error;
+    } finally {
+      // fetch privileges, delay to improve ui experience
+      this.isReady = true;
     }
+
+    // await this.apis.reporterApi.reporterGetAll();
+    // await this.apis.reporterApi.reporterGet("AB1200623046-009-13");
   }
 }
+</script>
+
+<style lang="scss">
+@import "~@/assets/styles/Theme.scss";
 </style>

@@ -1,9 +1,10 @@
 // @ts-nocheck
 "use strict";
 
-import { app, protocol, BrowserWindow } from "electron";
+import { app, protocol, BrowserWindow, ipcMain } from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS_DEVTOOLS } from "electron-devtools-installer";
+import * as path from "path";
 const isDevelopment = process.env.NODE_ENV !== "production";
 
 // Scheme must be registered before the app is ready
@@ -15,11 +16,13 @@ async function createWindow() {
     width: 800,
     height: 600,
     frame: false,
+    titleBarOverlay: true,
     webPreferences: {
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
       nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION as unknown as boolean,
       contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
+      preload: path.join(__dirname, "preload.js"), // 指定preload.js脚本
     },
   });
 
@@ -82,3 +85,18 @@ if (isDevelopment) {
     });
   }
 }
+
+ipcMain.on("minimize", () => {
+  const win = BrowserWindow.getFocusedWindow();
+  win.minimize();
+});
+
+ipcMain.on("maximize", () => {
+  const win = BrowserWindow.getFocusedWindow();
+  win.setFullScreen(!win.isFullScreen());
+});
+
+ipcMain.on("close", () => {
+  const win = BrowserWindow.getFocusedWindow();
+  win.close();
+});

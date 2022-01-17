@@ -12,10 +12,10 @@
     "postuninstall": "electron-builder install-app-deps",
     "prettier": "yarn prettier:ts && yarn prettier:vue",
     "prettier:dev": "yarn prettier:dev-ts && yarn prettier:dev-vue",
-    "prettier:ts": "prettier --write \"src/**/**.ts\"",
-    "prettier:vue": "prettier --write \"src/**/**.vue\" --parser vue",
     "prettier:dev-ts": "git diff --name-only | grep -P '\\.ts$' | xargs prettier --write ",
-    "prettier:dev-vue": "git diff --name-only | grep -P '\\.vue$' | xargs prettier --write --parser vue"
+    "prettier:dev-vue": "git diff --name-only | grep -P '\\.vue$' | xargs prettier --write --parser vue",
+    "prettier:ts": "prettier --write \"src/**/**.ts\"",
+    "prettier:vue": "prettier --write \"src/**/**.vue\" --parser vue"
   },
   "main": "background.js",
   "dependencies": {
@@ -27,6 +27,7 @@
     "vue-class-component": "^7.2.3",
     "vue-property-decorator": "^9.1.2",
     "vue-router": "^3.2.0",
+    "vuetify": "^2.4.0",
     "vuex": "^3.4.0",
     "vuex-class": "^0.3.2",
     "vuex-persistedstate": "^4.0.0-beta.3"
@@ -50,10 +51,13 @@
     "eslint-plugin-vue": "^6.2.2",
     "node-sass": "^4.12.0",
     "prettier": "^2.2.1",
-    "sass-loader": "^8.0.2",
+    "sass": "~1.32.0",
+    "sass-loader": "^10.0.0",
     "tslint-config-prettier": "1.18.0",
     "typescript": "~4.1.5",
     "vue-cli-plugin-electron-builder": "~2.1.1",
-    "vue-template-compiler": "^2.6.11"
+    "vue-cli-plugin-vuetify": "~2.4.5",
+    "vue-template-compiler": "^2.6.11",
+    "vuetify-loader": "^1.7.0"
   }
 }

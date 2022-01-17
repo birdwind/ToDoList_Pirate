@@ -1,0 +1,14 @@
+@import "Icon";
+@import "Color";
+@import "setting";
+
+html{
+  overflow: hidden;
+
+  body{
+    .to-do-list{
+      width: 100%;
+      height: 100vh;
+    }
+  }
+}

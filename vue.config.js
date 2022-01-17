@@ -52,7 +52,10 @@ async function executeCmd(name, cmd)
 
 module.exports = {
   productionSourceMap: false,
-  transpileDependencies: [new RegExp(`node_modules[/\\\\](${transferModules.join("|")})[/\\\\]`)],
+  transpileDependencies: [
+    /node_modules[/\\](vue-loading-rx|vuetify)[/\\]/,
+    'vuetify'
+  ],
   configureWebpack: {
     optimization: {
       runtimeChunk: true,
@@ -81,5 +84,11 @@ module.exports = {
       },
     },
     devtool: "source-map",
+  },
+  pluginOptions: {
+    electronBuilder: {
+      preload: "src/preload.ts",
+      nodeIntegration: true,
+    },
   },
 };
