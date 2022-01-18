@@ -1,23 +1,131 @@
 @import "Icon";
 @import "Color";
 @import "setting";
+@import "ElementUI";
+@import "Vuetify";
 
-html{
-  overflow: hidden;
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
 
-  body{
-    .to-do-list{
-      width: 100%;
-      height: 100vh;
+::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.3);
+  background: rgba(255, 255, 255, 0.7);
+
+  // border-top-left-radius: 16px;
+  // border-top-right-radius: 8px;
+  // border-bottom-left-radius: 16px;
+  // border-bottom-right-radius: 8px;
+
+  //box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.3);
+  //background: rgba(255, 255, 255, 0.7);
+
+   //&:vertical {
+   //  border-left: 8px solid #33383c;
+   //}
+   //
+   //&:horizontal {
+   //  border-top: 8px solid #33383c;
+   //}
+}
+
+::-webkit-scrollbar-thumb:hover,
+::-webkit-scrollbar-thumb:active {
+  background: #ebebeb;
+}
+
+::-webkit-scrollbar-corner {
+  display: none;
+}
+
+*.hide-scrollbar {
+  &::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    box-shadow: inset 0 0 0 transparent;
+    background: transparent;
+  }
+}
+
+
+body {
+  .to-do-lis {
+    width: 100%;
+    height: 100vh;
+  }
+}
+
+.v-application {
+  .v-application--wrap {
+    flex-direction: unset;
+    background-color: #2f3136;
+  }
+}
+
+/*Pirate Custom SCSS*/
+.pirate-aside {
+  background-color: #202225 !important;
+
+  .pirate-nav {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin: 12px 0;
+
+    .pirate-nav-top, .pirate-nav-list {
+      display: flex;
+      align-items: center;
+
+      .pirate-nav-item{
+        cursor: pointer;
+      }
     }
   }
 }
 
-.v-application{
-  .v-application--wrap{
-    flex-direction: unset;
+.pirate-button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  color: #909090;
+
+  &:hover {
+    color: #202225;
   }
 }
 
-.v-navigation-drawer{
+.copyrights {
+  position: sticky;
+  left: 0;
+  margin-top: 24px;
+
+  .text {
+    border-top: 1px solid #33383c;
+    height: 20px;
+    margin: 10px auto;
+    font-family: "Robot", "NotoSansTC", "Helvetica Neue", Helvetica, Arial, "PingFang TC", "Heiti TC", "LantingHei TC", "Microsoft JhengHei", "Microsoft YaHei", "微軟正黑體", sans-serif;
+    font-size: 16px;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.25;
+    letter-spacing: normal;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.2);
+  }
+
+  border-radius: 12px;
+  border: solid 1px rgba(255, 255, 255, 0.05);
+  background-color: #33383c;
+  box-shadow: -1px -1px 4px 0 rgba(255, 255, 255, 0.1), 1px 1px 4px 0 rgba(0, 0, 0, 0.3);
 }
+
+/*Pirate Custom SCSS ----END----*/

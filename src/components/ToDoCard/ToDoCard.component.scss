@@ -1,0 +1,49 @@
+.to-do-card {
+  width: 100%;
+  cursor: pointer;
+
+    .pirate-do-item-status {
+      display: flex;
+      align-items: center;
+
+      .icon-circle {
+        width: 8px;
+        height: 8px;
+        min-width: 8px;
+        min-height: 8px;
+      }
+
+      span {
+        font-size: 14px;
+      }
+    }
+
+    .pirate-do-item-main {
+      ::v-deep {
+        .el-collapse-item__header {
+          background: #C6C6C6;
+          border-radius: 6px;
+
+          &.is-active {
+            border-radius: 6px 6px 0 0;
+          }
+        }
+
+        .el-collapse-item__wrap {
+          background: #C6C6C6;
+          border-radius: 0 0 6px 6px;
+        }
+      }
+
+      .pirate-do-item-content {
+      }
+    }
+
+    .pirate-do-item-footer {
+
+    }
+
+    & + .to-do-card {
+      margin-top: 12px;
+    }
+}

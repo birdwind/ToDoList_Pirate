@@ -7,6 +7,10 @@
   </div>
 </template>
 
+<style lang="scss">
+@import "~@/assets/styles/Theme.scss";
+</style>
+
 <script lang="ts">
 import { BaseVue } from "@/base/view/BaseVue";
 import Component from "vue-class-component";
@@ -51,7 +55,3 @@ export default class App extends BaseVue {
   }
 }
 </script>
-
-<style lang="scss">
-@import "~@/assets/styles/Theme.scss";
-</style>

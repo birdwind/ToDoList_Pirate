@@ -1,9 +1,37 @@
 <v-app>
-    <el-aside>
-
+    <el-aside width="fit-content">
+        <v-navigation-drawer class="pirate-aside"
+                             permanent
+                             :width="56">
+            <div class="pirate-nav">
+                <div class="pirate-nav-top">
+                    <el-tooltip class="pirate-nav-item"
+                                effect="dark"
+                                content="首頁"
+                                placement="right">
+                        <router-link to="/todo">
+                            <el-avatar src="./images/logo.svg"></el-avatar>
+                        </router-link>
+                    </el-tooltip>
+                </div>
+                <el-divider></el-divider>
+                <div class="pirate-nav-list">
+                    <el-tooltip class="pirate-nav-item"
+                                effect="dark"
+                                content="新增工作區間"
+                                placement="right">
+                        <el-avatar>+</el-avatar>
+                    </el-tooltip>
+                </div>
+            </div>
+        </v-navigation-drawer>
     </el-aside>
-    <el-main>
-        <router-view></router-view>
+    <el-main style="height: calc(100vh - 35px);">
+        <router-view style="min-height: calc(100% - 66px)"></router-view>
+        <div class="copyrights">
+            <div class="text">
+                {{ copyRight }}
+            </div>
+        </div>
     </el-main>
-    <el-footer></el-footer>
 </v-app>

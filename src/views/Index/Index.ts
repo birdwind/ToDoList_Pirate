@@ -10,4 +10,5 @@ export default class Index extends Vue {
   links = ["Home", "Contacts", "Settings"];
   mini = true;
   drawer = null;
+  copyRight = process.env.VUE_APP_CopyRight;
 }

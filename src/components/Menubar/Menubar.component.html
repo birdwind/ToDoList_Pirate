@@ -1,10 +1,12 @@
 <div class="menubar outside background-color">
-    <div class="left-area">
+    <div class="left-area"
+         @dblclick="max">
+        <i class="pirate-icon icon-logo"></i>
         <span class="app_title">{{ headerTitle }}</span>
     </div>
     <div class="right-area">
-        <i class="icon icon-btn icon-minimize" @click="min"></i>
-        <i class="icon icon-btn icon-maximize" @click="max"></i>
-        <i class="icon icon-btn icon-close" @click="close"></i>
+        <i class="pirate-icon icon-btn icon-minimize" @click="min"></i>
+        <i class="pirate-icon icon-btn icon-maximize" @click="max"></i>
+        <i class="pirate-icon icon-btn icon-close" @click="close"></i>
     </div>
 </div>
