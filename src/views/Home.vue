@@ -15,9 +15,5 @@ import { BaseVue } from "@/base/view/BaseVue"; // @ is an alias to /src
     HelloWorld,
   },
 })
-export default class Home extends BaseVue {
-  mounted() {
-    this.showWarning("測試");
-  }
-}
+export default class Home extends BaseVue {}
 </script>

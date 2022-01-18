@@ -12,3 +12,12 @@ html{
     }
   }
 }
+
+.v-application{
+  .v-application--wrap{
+    flex-direction: unset;
+  }
+}
+
+.v-navigation-drawer{
+}

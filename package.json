@@ -21,6 +21,7 @@
   "dependencies": {
     "core-js": "^3.6.5",
     "element-ui": "^2.15.6",
+    "linq": "3.2.1",
     "loglevel": "^1.7.0",
     "loglevel-plugin-prefix": "^0.8.4",
     "vue": "^2.6.11",
