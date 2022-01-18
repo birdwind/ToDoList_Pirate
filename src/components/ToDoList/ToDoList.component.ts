@@ -13,34 +13,27 @@ import Vuedraggable from "vuedraggable";
 })
 export default class ToDoListComponent extends BaseVue {
   activeNames = null;
-  cardList = [
-    {
-      id: "001",
-      statusColor: "#f06d73",
-      statusText: "普通",
-      title: "測試",
-      content: "這是測試資料",
-    },
-    {
-      id: "002",
-      statusColor: "#f06d73",
-      statusText: "普通",
-      title: "測試1",
-      content: "這是測試資料",
-    },
-    {
-      id: "003",
-      statusColor: "#A6A6a6",
-      statusText: "普通",
-      title: "測試2",
-      content: "這是測試資料",
-    },
-  ];
 
   @Prop()
   title!: "";
 
+  @Prop()
+  taskList!: any[];
+
+  get dragOptions() {
+    return {
+      animation: 200,
+      group: "description",
+      disabled: false,
+      ghostClass: "ghost",
+    };
+  }
+
   handleChange() {
     MyLogger.log(this.activeNames);
+  }
+
+  handlerMove(evt: any, originalEvent: any) {
+    MyLogger.log(evt);
   }
 }

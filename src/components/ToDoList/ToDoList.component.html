@@ -6,15 +6,18 @@
         <el-collapse v-model="activeNames"
                      @change="handleChange"
                      accordion>
-            <Vuedraggable>
-                <transition-group>
-                    <ToDoCardComponent v-for="(item, index) in cardList"
+            <Vuedraggable :list="taskList"
+                          :data-index="title"
+                          v-bind="dragOptions"
+                          group="card">
+                <transition-group class="task-drop-area">
+                    <ToDoCardComponent v-for="(item, index) in taskList"
                                        :id="item.id"
                                        :status-color="item.statusColor"
                                        :status-text="item.statusText"
                                        :title="item.title"
                                        :content="item.content"
-                                       :key="item.id">
+                                       :key="index">
                     </ToDoCardComponent>
                 </transition-group>
             </Vuedraggable>

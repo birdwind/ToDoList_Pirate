@@ -1,5 +1,26 @@
 .to-do {
-  width: 100%;
-  display: flex;
-  flex: 0 1 auto;
+  display: block;
+
+  .to-do-wrapper {
+    padding: 12px;
+    display: flex;
+
+    .card-drop-area {
+      display: flex;
+      flex: 0 1 auto;
+    }
+
+    .pirate-do-list {
+      margin-left: 24px;
+
+      .pirate-do-header {
+        padding: 12px;
+        border-radius: 6px;
+      }
+
+      &:first-of-type {
+        margin-left: initial;
+      }
+    }
+  }
 }

@@ -3,6 +3,7 @@ import Vuex from "vuex";
 import createPersistedState from "vuex-persistedstate";
 import Auth from "@/store/module/auth";
 import ElementUI from "@/store/module/elementUI";
+import ToDo from "@/store/module/toDo";
 
 Vue.use(Vuex);
 
@@ -20,5 +21,6 @@ export default new Vuex.Store({
   modules: {
     Auth,
     ElementUI,
+    ToDo,
   },
 });
