@@ -3,7 +3,7 @@ import ToDoListComponent from "@/components/ToDoList/ToDoList.component.vue";
 import { BaseVue } from "@/base/view/BaseVue";
 import { MyLogger } from "@/base/utils/MyLogger";
 import Vuedraggable from "vuedraggable";
-import {Getter, State} from "vuex-class";
+import { Getter, State } from "vuex-class";
 import { ToDoCard } from "@/model/ToDoCard";
 
 @Component({
