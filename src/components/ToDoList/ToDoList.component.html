@@ -9,7 +9,8 @@
             <Vuedraggable :list="taskList"
                           :data-index="title"
                           v-bind="dragOptions"
-                          group="card">
+                          group="card"
+                          :move="handlerMove">
                 <transition-group class="task-drop-area">
                     <ToDoCardComponent v-for="(item, index) in taskList"
                                        :id="item.id"

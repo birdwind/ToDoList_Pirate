@@ -5,3 +5,6 @@ export const AUTH_LOGIN = "AUTH_LOGIN";
 export const UI_LOADING = "UI_LOADING";
 export const UI_HISTORY_MESSAGE = "UI_HISTORY_MESSAGE";
 export const UI_RELOAD = "UI_RELOAD";
+
+// todo模組
+export const TODO_ADD_CARD = "TODO_ADD_CARD";

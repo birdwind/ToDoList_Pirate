@@ -7,3 +7,6 @@ export type Login = (data: { account: string; password: string }) => Promise<voi
 export type ShowLoading = (isShow: boolean) => void;
 export type Reload = (isReload: boolean) => Promise<void>;
 export type AddHistoryMessage = (message: HistoryMessage) => Promise<void>;
+
+// todo模組
+export type AddCard = (name: string) => void;

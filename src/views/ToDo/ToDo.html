@@ -2,7 +2,8 @@
     <div class="to-do-wrapper">
         <Vuedraggable v-bind="dragOptions"
                       :list="cardList"
-                      group="task">
+                      group="task"
+                      :move="handlerMove">
             <transition-group class="card-drop-area">
                 <ToDoListComponent v-for="(item, index) in cardList"
                                    :key="item.name + index"
@@ -13,8 +14,14 @@
         </Vuedraggable>
 
         <div class="pirate-do-list">
-            <div class="pirate-do-header">
-                <span>新增卡片</span>
+            <div class="pirate-do-header" @click="createCard">
+                <span v-if="!isShowAddCardNameArea">新增卡片</span>
+                <input v-if="isShowAddCardNameArea"
+                       v-model="newCardName"
+                       ref="card_name"
+                       @blur="addCardToVuex"
+                       v-on:keyup.enter="addCardToVuex"
+                       placeholder="請輸入卡片名稱"></input>
             </div>
         </div>
     </div>
