@@ -1,19 +1,61 @@
 <div class="to-do-card">
-    <el-card class="pirate-do-item">
+    <el-card class="pirate-do-item"
+             v-if="!isCreat && !isEdit">
         <div class="pirate-do-item-status">
-            <i class="pirate-icon icon-circle" :style="{backgroundColor: statusColor,}"></i>
-            <span>{{ statusText }}</span>
+            <i class="pirate-icon icon-circle" :style="{backgroundColor: toDoTask.statusColor,}"></i>
+            <span>{{ toDoTask.statusText }}</span>
         </div>
         <div class="pirate-do-item-main">
-            <el-collapse-item :title="title"
-                              :name="id">
+            <el-collapse-item :title="toDoTask.title"
+                              :name="toDoTask.id">
                 <div class="pirate-do-item-content">
-                    <span>{{ content }}</span>
+                    <span>{{ toDoTask.content }}</span>
                 </div>
             </el-collapse-item>
         </div>
         <div class="pirate-do-item-footer">
             <div></div>
+        </div>
+    </el-card>
+
+    <el-card class="pirate-do-item pirate-do-item-edit"
+             v-else>
+        <div class="pirate-do-item-status">
+            <el-select v-model="status"
+                       placeholder="請選擇狀態"
+                       @change="handlerStatusChanged">
+                <el-option
+                        v-for="(item, index) in taskStatus"
+                        :key="item.value"
+                        :label="item.value"
+                        :value="index">
+                    <div class="pirate-do-item-status">
+                        <i class="pirate-icon icon-circle" :style="{backgroundColor: item.color,}"></i>
+                        <span>{{ item.value }}</span>
+                    </div>
+                </el-option>
+            </el-select>
+        </div>
+        <div class="pirate-do-item-main">
+            <input placeholder="請輸入標題"
+                   v-model="toDoTaskItem.title"></input>
+            <textarea class="content"
+                      placeholder="請輸入內容"
+                      v-model="toDoTaskItem.content"></textarea>
+        </div>
+        <div class="pirate-do-item-footer">
+            <div class="right-area">
+                <el-button type="danger"
+                           plain
+                           @click="handlerCancel">
+                    取消
+                </el-button>
+                <el-button type="success"
+                           plain
+                           @click="handlerConfirm">
+                    確認
+                </el-button>
+            </div>
         </div>
     </el-card>
 </div>

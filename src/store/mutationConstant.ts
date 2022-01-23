@@ -8,3 +8,6 @@ export const UI_RELOAD = "UI_RELOAD";
 
 // todo模組
 export const TODO_ADD_CARD = "TODO_ADD_CARD";
+export const TODO_UPDATE_CARD_TITLE = "TODO_UPDATE_CARD_TITLE";
+export const TODO_UPDATE_TASK_LIST = "TODO_UPDATE_TASK_LIST";
+export const TODO_ADD_TASK = "TODO_ADD_TASK";

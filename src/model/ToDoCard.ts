@@ -1,6 +1,6 @@
-import { ToDoTask } from "@/model/ToDoTask";
+import { ToDoTaskInterface } from "@/model/ToDoTask";
 
-export interface ToDoCard {
+export interface ToDoCardInterface {
   name: string;
-  task: ToDoTask[];
+  task: ToDoTaskInterface[];
 }

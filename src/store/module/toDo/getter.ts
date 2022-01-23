@@ -1,6 +1,7 @@
 import { ToDoState } from "@/store/module/toDo/state";
-import { ToDoCard } from "@/model/ToDoCard";
+import { ToDoCardInterface } from "@/model/ToDoCard";
 
 export default {
-  cardList: (state: ToDoState): ToDoCard[] => state.cardList,
+  cardList: (state: ToDoState): ToDoCardInterface[] => state.cardList,
+  taskStatus: (state: ToDoState): ToDoCardInterface[] => state.taskStatus,
 };

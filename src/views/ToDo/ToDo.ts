@@ -4,7 +4,7 @@ import { BaseVue } from "@/base/view/BaseVue";
 import { MyLogger } from "@/base/utils/MyLogger";
 import Vuedraggable from "vuedraggable";
 import { Action, Getter, State } from "vuex-class";
-import { ToDoCard } from "@/model/ToDoCard";
+import { ToDoCardInterface } from "@/model/ToDoCard";
 import { AddCard } from "@/store/types";
 
 @Component({
@@ -14,14 +14,15 @@ import { AddCard } from "@/store/types";
   },
 })
 export default class ToDo extends BaseVue {
-  $refs!: {
-    card_name: any;
-  };
   @Getter("ToDo/cardList")
-  private cardList!: ToDoCard[];
+  private cardList!: ToDoCardInterface[];
 
   @Action("ToDo/addCard")
   private addCard!: AddCard;
+
+  $refs!: {
+    card_name: any;
+  };
 
   current = "";
   isShowAddCardNameArea = false;

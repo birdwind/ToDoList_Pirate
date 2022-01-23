@@ -10,3 +10,6 @@ export type AddHistoryMessage = (message: HistoryMessage) => Promise<void>;
 
 // todo模組
 export type AddCard = (name: string) => void;
+export type UpdateCardTitle = (data: { title: string; index: number }) => void;
+export type UpdateTaskList = (data: any) => void;
+export type AddTask = (data: any) => void;

@@ -8,7 +8,8 @@
                 <ToDoListComponent v-for="(item, index) in cardList"
                                    :key="item.name + index"
                                    :title="item.name"
-                                   :task-list="item.task">
+                                   :task-list="item.task"
+                                   :card-index="index">
                 </ToDoListComponent>
             </transition-group>
         </Vuedraggable>

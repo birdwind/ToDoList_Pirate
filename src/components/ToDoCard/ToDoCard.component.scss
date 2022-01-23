@@ -2,6 +2,8 @@
   width: 100%;
   cursor: pointer;
 
+  .pirate-do-item {
+
     .pirate-do-item-status {
       display: flex;
       align-items: center;
@@ -46,4 +48,72 @@
     & + .to-do-card {
       margin-top: 12px;
     }
+  }
+
+  .pirate-do-item-edit {
+
+    .el-select {
+      width: 100%;
+    }
+
+    ::v-deep{
+      input, textarea {
+        width: 100%;
+        border: 1px solid #959595;
+        padding: 4px 12px;
+        border-radius: 6px;
+
+        &:focus-visible {
+          outline: unset;
+        }
+      }
+
+    }
+
+    .pirate-do-item-status {
+      margin-bottom: 12px;
+    }
+
+    .pirate-do-item-main{
+      textarea{
+        margin-top: 6px;
+        &.content {
+          min-height: 80px;
+          max-height: 80px;
+        }
+      }
+    }
+
+    .pirate-do-item-footer{
+      display: flex;
+
+      .right-area {
+        display: flex;
+        flex: 1;
+        justify-content: flex-end;
+      }
+    }
+
+  }
+
+}
+
+.el-select-dropdown__item {
+  ::v-deep {
+    .pirate-do-item-status {
+      display: flex;
+      align-items: center;
+
+      .icon-circle {
+        width: 12px;
+        height: 12px;
+        min-width: 12px;
+        min-height: 12px;
+      }
+
+      span {
+        font-size: 16px;
+      }
+    }
+  }
 }

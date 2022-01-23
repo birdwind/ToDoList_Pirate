@@ -1,31 +1,41 @@
 <div class="pirate-do-list">
-    <div class="pirate-do-header">
-        <span>{{ title }}</span>
+    <div class="pirate-do-header"
+         @click="handlerFocusHeader">
+        <span v-if="!isShowCardEdit">{{ title }}</span>
+        <input v-else
+               v-model="titleEditInput"
+               ref="title_input"
+               @blur="updateTitleToVuex"
+               v-on:keyup.enter="updateTitleToVuex"
+               :placeholder="title"></input>
     </div>
     <div class="pirate-do-main">
         <el-collapse v-model="activeNames"
-                     @change="handleChange"
                      accordion>
             <Vuedraggable :list="taskList"
-                          :data-index="title"
+                          :data-index="cardIndex"
                           v-bind="dragOptions"
                           group="card"
-                          :move="handlerMove">
+                          :move="handlerMove"
+                          @end="handlerEndDrag">
                 <transition-group class="task-drop-area">
-                    <ToDoCardComponent v-for="(item, index) in taskList"
-                                       :id="item.id"
-                                       :status-color="item.statusColor"
-                                       :status-text="item.statusText"
-                                       :title="item.title"
-                                       :content="item.content"
-                                       :key="index">
+                    <ToDoCardComponent v-for="item in taskList"
+                                       :key="item.id"
+                                       :card-index="cardIndex"
+                                       :to-do-task="item">
                     </ToDoCardComponent>
                 </transition-group>
             </Vuedraggable>
+
+            <ToDoCardComponent v-if="isShowTaskEdit"
+                               :card-index="cardIndex"
+                               :isCreat="true"
+                               @handlerCardEdited="handlerCardEdited">
+            </ToDoCardComponent>
         </el-collapse>
     </div>
     <div class="pirate-do-footer">
-        <button class="pirate-button">
+        <button class="pirate-button" @click="addCard">
             <span>新增卡片</span>
         </button>
     </div>
