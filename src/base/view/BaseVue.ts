@@ -3,6 +3,7 @@ import { MessageType } from "element-ui/types/message";
 import { NotificationPosition } from "element-ui/types/notification";
 import { Action } from "vuex-class";
 import { AddHistoryMessage, Reload, ShowLoading } from "@/store/types";
+import { MyLogger } from "@/base/utils/MyLogger";
 
 export class BaseVue extends Vue {
   @Action("ElementUI/reload")
@@ -55,5 +56,11 @@ export class BaseVue extends Vue {
     this.$nextTick(() => {
       this.reload(false);
     });
+  }
+
+  routerLink(path: string) {
+    if (this.$route.fullPath !== path) {
+      this.$router.push(path);
+    }
   }
 }

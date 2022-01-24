@@ -7,3 +7,4 @@ export * from "./configVuetify";
 // export * from "./configUMYUi";
 // export * from "./configFontAwesomeIcon";
 // export * from "./configBootstrapDatetimePicker";
+export * from "./configRightMouseMenu";

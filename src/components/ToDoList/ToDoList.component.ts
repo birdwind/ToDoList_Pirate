@@ -22,6 +22,9 @@ export default class ToDoListComponent extends BaseVue {
   updateTaskList!: UpdateTaskList;
 
   @Prop()
+  workIndex!: number;
+
+  @Prop()
   title!: "";
 
   @Prop()
@@ -67,7 +70,11 @@ export default class ToDoListComponent extends BaseVue {
   updateTitleToVuex() {
     this.isShowCardEdit = false;
     if (!StringUtility.isNullOrEmpty(this.titleEditInput)) {
-      this.updateCardTitle({ title: this.titleEditInput, index: this.cardIndex });
+      this.updateCardTitle({
+        workIndex: this.workIndex,
+        title: this.titleEditInput,
+        index: this.cardIndex,
+      });
     }
   }
 
@@ -91,12 +98,13 @@ export default class ToDoListComponent extends BaseVue {
   }
 
   handlerEndDrag() {
-    this.updateTaskList({
-      taskContent: this.cardDropElement,
-      cardFromIndex: this.cardDropFromCardIndex,
-      cardToIndex: this.cardDropToCardIndex,
-      taskList: this.cardDropToCardList,
-    });
+    // this.updateTaskList({
+    //   taskContent: this.cardDropElement,
+    //   cardFromIndex: this.cardDropFromCardIndex,
+    //   cardToIndex: this.cardDropToCardIndex,
+    //   taskList: this.cardDropToCardList,
+    // });
+    this.updateTaskList();
   }
 
   handlerCardEdited() {

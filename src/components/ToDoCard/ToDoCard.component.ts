@@ -8,6 +8,8 @@ import { AddTask } from "@/store/types";
 @Component({})
 export default class ToDoCardComponent extends BaseVue {
   @Prop()
+  workIndex!: number;
+  @Prop()
   cardIndex!: number;
   @Prop()
   toDoTask!: ToDoTaskInterface;
@@ -64,6 +66,7 @@ export default class ToDoCardComponent extends BaseVue {
 
   handlerConfirm() {
     this.addTask({
+      workIndex: this.workIndex,
       cardIndex: this.cardIndex,
       data: this.toDoTask ? this.toDoTask : this.toDoTaskAddItem,
     });

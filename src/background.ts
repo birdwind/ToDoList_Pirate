@@ -95,10 +95,19 @@ ipcMain.on("minimize", () => {
 
 ipcMain.on("maximize", () => {
   const win = BrowserWindow.getFocusedWindow();
-  win.setFullScreen(!win.isFullScreen());
+  if (win.isMaximized()) {
+    win.unmaximize();
+  } else {
+    win.maximize();
+  }
 });
 
 ipcMain.on("close", () => {
   const win = BrowserWindow.getFocusedWindow();
   win.close();
+});
+
+ipcMain.on("fullScreen", () => {
+  const win = BrowserWindow.getFocusedWindow();
+  win.setFullScreen(!win.isFullScreen());
 });

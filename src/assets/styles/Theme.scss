@@ -78,14 +78,30 @@ body {
     width: 100%;
     margin: 12px 0;
 
-    .pirate-nav-top, .pirate-nav-list {
+    .pirate-nav-top{
       display: flex;
       align-items: center;
+    }
 
-      .pirate-nav-item{
-        cursor: pointer;
+    .pirate-nav-item{
+      span{
+        &.el-avatar{
+          transition: border-radius 0.3s;
+        }
+      }
+
+      &.router-link-active, &:hover {
+        span{
+          &.el-avatar{
+            border-radius: 12px;
+            background-color: #5865F2;
+          }
+        }
+
       }
     }
+
+
   }
 }
 

@@ -3,13 +3,15 @@
         <Vuedraggable v-bind="dragOptions"
                       :list="cardList"
                       group="task"
-                      :move="handlerMove">
+                      :move="handlerMove"
+                      @end="handlerEndDrag">
             <transition-group class="card-drop-area">
                 <ToDoListComponent v-for="(item, index) in cardList"
                                    :key="item.name + index"
                                    :title="item.name"
                                    :task-list="item.task"
-                                   :card-index="index">
+                                   :card-index="index"
+                                   :work-index="workPosition">
                 </ToDoListComponent>
             </transition-group>
         </Vuedraggable>

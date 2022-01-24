@@ -1,12 +1,19 @@
-import { ToDoCardInterface } from "@/model/ToDoCard";
+import { ToDoWorkInterface } from "@/model/ToDoWork";
+import { UUID } from "uuid-generator-ts";
 
 export interface ToDoState {
-  cardList: ToDoCardInterface[];
+  workList: ToDoWorkInterface[];
   taskStatus: any[];
 }
 
 export const state: ToDoState = {
-  cardList: [],
+  workList: [
+    {
+      name: "首頁",
+      id: new UUID().toString(),
+      cardList: [],
+    },
+  ],
   taskStatus: [
     {
       value: "普通",

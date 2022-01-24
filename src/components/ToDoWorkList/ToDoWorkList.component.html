@@ -1,0 +1,38 @@
+<div class="to-do-work-list">
+    <Vuedraggable v-bind="dragOptions"
+                  handle=".pirate-nav-item"
+                  group="work"
+                  :list="workList"
+                  :move="handlerMove"
+                  @end="handlerEndDrag">
+        <transition-group class="work-drop-area">
+            <el-tooltip v-for="(item, index) in workList"
+                        v-if="index !== 0"
+                        class="pirate-nav-item"
+                        effect="dark"
+                        placement="right"
+                        :content="item.name"
+                        :key="item.id">
+                    <router-link :to="`/todo/${item.id}`">
+                        <el-avatar v-right-click="temp">{{ item.name.charAt(0) }}</el-avatar>
+                    </router-link>
+            </el-tooltip>
+        </transition-group>
+    </Vuedraggable>
+
+    <el-tooltip class="pirate-nav-item"
+                effect="dark"
+                content="新增工作區間"
+                placement="right">
+        <el-popover placement="left"
+                    v-model="isShowCreate">
+            <div class=""
+                 v-on:keydown.enter="handlerConfirmAddWork">
+                <input placeholder="請輸入工作區間名稱"
+                       ref="work_creator_input"
+                       v-model="workCreator.name"></input>
+            </div>
+            <el-avatar slot="reference">+</el-avatar>
+        </el-popover>
+    </el-tooltip>
+</div>

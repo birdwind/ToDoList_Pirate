@@ -1,0 +1,14 @@
+.to-do-work-list {
+  display: flex;
+  flex-direction: column;
+
+  .pirate-nav-item{
+    cursor: pointer;
+  }
+
+  .work-drop-area{
+    display: flex;
+    flex-direction: column;
+  }
+
+}

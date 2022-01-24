@@ -19,6 +19,7 @@
   },
   "main": "background.js",
   "dependencies": {
+    "@xunlei/vue-context-menu": "^1.0.2",
     "core-js": "^3.6.5",
     "element-ui": "^2.15.6",
     "linq": "3.2.1",
@@ -27,7 +28,9 @@
     "uuid-generator-ts": "^1.1.0",
     "vue": "^2.6.11",
     "vue-class-component": "^7.2.3",
+    "vue-click-outside": "^1.1.0",
     "vue-property-decorator": "^9.1.2",
+    "vue-right-click-menu": "^1.1.1",
     "vue-router": "^3.2.0",
     "vuedraggable": "^2.24.3",
     "vuetify": "^2.4.0",

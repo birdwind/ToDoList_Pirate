@@ -9,20 +9,13 @@
                                 effect="dark"
                                 content="首頁"
                                 placement="right">
-                        <router-link to="/todo">
-                            <el-avatar src="./images/logo.svg"></el-avatar>
+                        <router-link :to="`/home`">
+                            <el-avatar src="/images/logo.jpg"></el-avatar>
                         </router-link>
                     </el-tooltip>
                 </div>
                 <el-divider></el-divider>
-                <div class="pirate-nav-list">
-                    <el-tooltip class="pirate-nav-item"
-                                effect="dark"
-                                content="新增工作區間"
-                                placement="right">
-                        <el-avatar>+</el-avatar>
-                    </el-tooltip>
-                </div>
+                <ToDoWorkListComponent></ToDoWorkListComponent>
             </div>
         </v-navigation-drawer>
     </el-aside>
