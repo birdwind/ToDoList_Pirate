@@ -118,7 +118,7 @@ body {
   }
 }
 
-.pirate-do-list {
+.pirate-do-card {
   min-width: 300px;
   width: 300px;
   height: fit-content;
@@ -134,6 +134,9 @@ body {
     min-height: 35px;
     font-weight: bold;
     padding: 0 12px;
+    input{
+      width: 100%;
+    }
   }
 
   .pirate-do-main {
@@ -159,7 +162,7 @@ body {
     border-top: 1px dashed #909090;
   }
 
-  & + .pirate-do-list {
+  & + .pirate-do-card {
     margin-left: 24px;
   }
 }

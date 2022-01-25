@@ -1,75 +1,137 @@
 import Component from "vue-class-component";
 import { BaseVue } from "@/base/view/BaseVue";
-import { Emit, Prop, Watch } from "vue-property-decorator";
-import { Action, Getter } from "vuex-class";
-import { ToDoTask, ToDoTaskInterface } from "@/model/ToDoTask";
-import { AddTask } from "@/store/types";
+import { MyLogger } from "@/base/utils/MyLogger";
+import ToDoTaskComponent from "@/components/ToDoTask/ToDoTask.component.vue";
+import { Prop } from "vue-property-decorator";
+import Vuedraggable from "vuedraggable";
+import { Action } from "vuex-class";
+import { DeleteTask, UpdateCardTitle, UpdateTaskList } from "@/store/types";
+import { StringUtility } from "@/base/utils/StringUtility";
 
-@Component({})
+@Component({
+  components: {
+    ToDoTaskComponent,
+    Vuedraggable,
+  },
+})
 export default class ToDoCardComponent extends BaseVue {
+  @Action("ToDo/updateCardTitle")
+  updateCardTitle!: UpdateCardTitle;
+
+  @Action("ToDo/updateTaskList")
+  updateTaskList!: UpdateTaskList;
+
+  @Action("ToDo/deleteTask")
+  deleteTask!: DeleteTask;
+
   @Prop()
   workIndex!: number;
+
   @Prop()
-  cardIndex!: number;
+  title!: "";
+
   @Prop()
-  toDoTask!: ToDoTaskInterface;
+  cardIndex!: -1;
+
   @Prop()
-  isCreat!: boolean;
+  taskList!: any[];
 
-  @Getter("ToDo/taskStatus")
-  taskStatus!: any[];
+  $refs!: {
+    title_input: any;
+  };
 
-  @Action("ToDo/addTask")
-  addTask!: AddTask;
+  activeNames = null;
 
-  isEdit = false;
-  toDoTaskAddItem!: ToDoTaskInterface;
-  status = "";
+  isShowCardEdit = false;
+  titleEditInput = "";
+  cardDropFromCardIndex = -1;
+  cardDropToCardIndex = -1;
+  cardDropToCardList = Array();
+  cardDropElement = null;
 
-  created() {
-    if (this.isCreat) {
-      this.toDoTaskAddItem = new ToDoTask();
-    } else {
-      this.status = this.toDoTask.statusText;
+  isShowTaskEdit = false;
+
+  mounted() {
+    this.$el.querySelectorAll(".task-drop-area .to-do-task").forEach((element) => {
+      element.addEventListener(
+        "contextmenu",
+        (event) => {
+          const rightMenuData = [
+            {
+              title: `刪除`,
+              handler: this.handlerDeleteCard.bind(this, element),
+            },
+          ];
+          this.$root.$emit("contextmenu", { event, rightMenuData });
+        },
+        false
+      );
+    });
+  }
+
+  get dragOptions() {
+    return {
+      animation: 200,
+      group: "description",
+      disabled: false,
+      ghostClass: "ghost",
+    };
+  }
+
+  /**
+   * Card 相關
+   */
+  handlerFocusHeader() {
+    this.isShowCardEdit = true;
+    this.$nextTick(() => {
+      this.$refs.title_input.focus();
+    });
+  }
+
+  updateTitleToVuex() {
+    this.isShowCardEdit = false;
+    if (!StringUtility.isNullOrEmpty(this.titleEditInput)) {
+      this.updateCardTitle({
+        workIndex: this.workIndex,
+        title: this.titleEditInput,
+        index: this.cardIndex,
+      });
     }
   }
 
-  get toDoTaskItem() {
-    if (this.isCreat) {
-      return this.toDoTaskAddItem;
-    }
-    return this.toDoTask;
+  /**
+   * Card 相關
+   */
+
+  /**
+   * Task 相關
+   */
+
+  showNewTaskArea() {
+    this.isShowTaskEdit = true;
   }
 
-  handlerStatusChanged(data: any) {
-    if (this.isCreat) {
-      this.toDoTaskAddItem.statusColor = this.taskStatus[data].color;
-      this.toDoTaskAddItem.statusText = this.taskStatus[data].value;
-    } else {
-      this.toDoTask.statusColor = this.taskStatus[data].color;
-      this.toDoTask.statusText = this.taskStatus[data].value;
-    }
+  handlerMove(evt: any, originalEvent: any) {
+    this.cardDropFromCardIndex = evt.from.parentElement.dataset.index;
+    this.cardDropToCardIndex = evt.to.parentElement.dataset.index;
+    this.cardDropToCardList = evt.relatedContext.list;
+    this.cardDropElement = evt.draggedContext.element;
   }
 
-  @Emit("handlerCardEdited")
+  handlerEndDrag() {
+    this.updateTaskList();
+  }
+
   handlerCardEdited() {
-    return true;
+    this.isShowTaskEdit = false;
   }
 
-  handlerCancel() {
-    if (this.isCreat) {
-      this.handlerCardEdited();
-    } else {
-      this.isEdit = false;
-    }
-  }
-
-  handlerConfirm() {
-    this.addTask({
+  handlerDeleteCard(element: Element) {
+    const currentCardId = element.getAttribute("card-id");
+    this.deleteTask({
       workIndex: this.workIndex,
       cardIndex: this.cardIndex,
-      data: this.toDoTask ? this.toDoTask : this.toDoTaskAddItem,
+      taskId: "",
     });
-    this.handlerCardEdited();
   }
 }

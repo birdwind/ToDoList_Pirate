@@ -1,0 +1,119 @@
+.to-do-task {
+  width: 100%;
+  cursor: pointer;
+
+  .pirate-do-task {
+
+    .pirate-do-task-status {
+      display: flex;
+      align-items: center;
+
+      .icon-circle {
+        width: 8px;
+        height: 8px;
+        min-width: 8px;
+        min-height: 8px;
+      }
+
+      span {
+        font-size: 14px;
+      }
+    }
+
+    .pirate-do-task-main {
+      ::v-deep {
+        .el-collapse-item__header {
+          background: #C6C6C6;
+          border-radius: 6px;
+
+          &.is-active {
+            border-radius: 6px 6px 0 0;
+          }
+        }
+
+        .el-collapse-item__wrap {
+          background: #C6C6C6;
+          border-radius: 0 0 6px 6px;
+        }
+      }
+
+      .pirate-do-task-content {
+      }
+    }
+
+    .pirate-do-task-footer {
+
+    }
+
+    & + .to-do-card {
+      margin-top: 12px;
+    }
+  }
+
+  .pirate-do-task-edit {
+
+    .el-select {
+      width: 100%;
+    }
+
+    ::v-deep{
+      input, textarea {
+        width: 100%;
+        border: 1px solid #959595;
+        padding: 4px 12px;
+        border-radius: 6px;
+
+        &:focus-visible {
+          outline: unset;
+        }
+      }
+
+    }
+
+    .pirate-do-task-status {
+      margin-bottom: 12px;
+    }
+
+    .pirate-do-task-main{
+      textarea{
+        margin-top: 6px;
+        &.content {
+          min-height: 80px;
+          max-height: 80px;
+        }
+      }
+    }
+
+    .pirate-do-task-footer{
+      display: flex;
+
+      .right-area {
+        display: flex;
+        flex: 1;
+        justify-content: flex-end;
+      }
+    }
+
+  }
+
+}
+
+.el-select-dropdown__item {
+  ::v-deep {
+    .pirate-do-task-status {
+      display: flex;
+      align-items: center;
+
+      .icon-circle {
+        width: 12px;
+        height: 12px;
+        min-width: 12px;
+        min-height: 12px;
+      }
+
+      span {
+        font-size: 16px;
+      }
+    }
+  }
+}

@@ -3,7 +3,6 @@
                   handle=".pirate-nav-item"
                   group="work"
                   :list="workList"
-                  :move="handlerMove"
                   @end="handlerEndDrag">
         <transition-group class="work-drop-area">
             <el-tooltip v-for="(item, index) in workList"
@@ -14,7 +13,7 @@
                         :content="item.name"
                         :key="item.id">
                     <router-link :to="`/todo/${item.id}`">
-                        <el-avatar v-right-click="temp">{{ item.name.charAt(0) }}</el-avatar>
+                        <el-avatar :workId="item.id">{{ item.name.charAt(0) }}</el-avatar>
                     </router-link>
             </el-tooltip>
         </transition-group>

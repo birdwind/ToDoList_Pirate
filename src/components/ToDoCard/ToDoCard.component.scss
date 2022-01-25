@@ -1,119 +1,48 @@
-.to-do-card {
-  width: 100%;
-  cursor: pointer;
-
-  .pirate-do-item {
-
-    .pirate-do-item-status {
-      display: flex;
-      align-items: center;
-
-      .icon-circle {
-        width: 8px;
-        height: 8px;
-        min-width: 8px;
-        min-height: 8px;
-      }
-
-      span {
-        font-size: 14px;
-      }
-    }
-
-    .pirate-do-item-main {
-      ::v-deep {
-        .el-collapse-item__header {
-          background: #C6C6C6;
-          border-radius: 6px;
-
-          &.is-active {
-            border-radius: 6px 6px 0 0;
-          }
-        }
-
-        .el-collapse-item__wrap {
-          background: #C6C6C6;
-          border-radius: 0 0 6px 6px;
-        }
-      }
-
-      .pirate-do-item-content {
-      }
-    }
-
-    .pirate-do-item-footer {
-
-    }
-
-    & + .to-do-card {
-      margin-top: 12px;
-    }
-  }
-
-  .pirate-do-item-edit {
-
-    .el-select {
-      width: 100%;
-    }
-
-    ::v-deep{
-      input, textarea {
-        width: 100%;
-        border: 1px solid #959595;
-        padding: 4px 12px;
-        border-radius: 6px;
-
-        &:focus-visible {
-          outline: unset;
-        }
-      }
-
-    }
-
-    .pirate-do-item-status {
-      margin-bottom: 12px;
-    }
-
-    .pirate-do-item-main{
-      textarea{
-        margin-top: 6px;
-        &.content {
-          min-height: 80px;
-          max-height: 80px;
-        }
-      }
-    }
-
-    .pirate-do-item-footer{
-      display: flex;
-
-      .right-area {
-        display: flex;
-        flex: 1;
-        justify-content: flex-end;
-      }
-    }
-
-  }
-
-}
-
-.el-select-dropdown__item {
-  ::v-deep {
-    .pirate-do-item-status {
-      display: flex;
-      align-items: center;
-
-      .icon-circle {
-        width: 12px;
-        height: 12px;
-        min-width: 12px;
-        min-height: 12px;
-      }
-
-      span {
-        font-size: 16px;
-      }
-    }
-  }
-}
+//.pirate-do-card {
+//  min-width: 300px;
+//  width: 300px;
+//  height: fit-content;
+//  background: #292a2d;
+//  border: transparent;
+//  cursor: pointer;
+//
+//  .pirate-do-header {
+//    display: flex;
+//    align-items: center;
+//    background: #E2E4E6;
+//    border-radius: 6px 6px 0 0;
+//    min-height: 35px;
+//    font-weight: bold;
+//    padding: 0 12px;
+//    input{
+//      width: 100%;
+//    }
+//  }
+//
+//  .pirate-do-main {
+//    display: flex;
+//    justify-content: center;
+//    background: #E2E4E6;
+//    padding: 12px;
+//
+//    .task-drop-area {
+//      display: block;
+//      min-height: 20px;
+//    }
+//
+//    .ghost {
+//      opacity: 0.5;
+//      background: #c8ebfb;
+//    }
+//  }
+//
+//  .pirate-do-footer {
+//    background: #E2E4E6;
+//    border-radius: 0 0 6px 6px;
+//    border-top: 1px dashed #909090;
+//  }
+//
+//  & + .pirate-do-card {
+//    margin-left: 24px;
+//  }
+//}

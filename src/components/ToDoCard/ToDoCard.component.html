@@ -1,61 +1,44 @@
-<div class="to-do-card">
-    <el-card class="pirate-do-item"
-             v-if="!isCreat && !isEdit">
-        <div class="pirate-do-item-status">
-            <i class="pirate-icon icon-circle" :style="{backgroundColor: toDoTask.statusColor,}"></i>
-            <span>{{ toDoTask.statusText }}</span>
-        </div>
-        <div class="pirate-do-item-main">
-            <el-collapse-item :title="toDoTask.title"
-                              :name="toDoTask.id">
-                <div class="pirate-do-item-content">
-                    <span>{{ toDoTask.content }}</span>
-                </div>
-            </el-collapse-item>
-        </div>
-        <div class="pirate-do-item-footer">
-            <div></div>
-        </div>
-    </el-card>
+<div class="pirate-do-card">
+    <div class="pirate-do-header"
+         @click="handlerFocusHeader">
+        <span v-if="!isShowCardEdit">{{ title }}</span>
+        <input v-else
+               v-model="titleEditInput"
+               ref="title_input"
+               @blur="updateTitleToVuex"
+               v-on:keyup.enter="updateTitleToVuex"
+               :placeholder="title"></input>
+    </div>
+    <div class="pirate-do-main">
+        <el-collapse v-model="activeNames"
+                     accordion>
+            <Vuedraggable :list="taskList"
+                          :data-index="cardIndex"
+                          v-bind="dragOptions"
+                          group="card"
+                          :move="handlerMove"
+                          @end="handlerEndDrag">
+                <transition-group class="task-drop-area">
+                    <ToDoTaskComponent v-for="item in taskList"
+                                       :key="item.id"
+                                       :work-index="workIndex"
+                                       :card-index="cardIndex"
+                                       :to-do-task="item">
+                    </ToDoTaskComponent>
+                </transition-group>
+            </Vuedraggable>
 
-    <el-card class="pirate-do-item pirate-do-item-edit"
-             v-else>
-        <div class="pirate-do-item-status">
-            <el-select v-model="status"
-                       placeholder="請選擇狀態"
-                       @change="handlerStatusChanged">
-                <el-option
-                        v-for="(item, index) in taskStatus"
-                        :key="item.value"
-                        :label="item.value"
-                        :value="index">
-                    <div class="pirate-do-item-status">
-                        <i class="pirate-icon icon-circle" :style="{backgroundColor: item.color,}"></i>
-                        <span>{{ item.value }}</span>
-                    </div>
-                </el-option>
-            </el-select>
-        </div>
-        <div class="pirate-do-item-main">
-            <input placeholder="請輸入標題"
-                   v-model="toDoTaskItem.title"></input>
-            <textarea class="content"
-                      placeholder="請輸入內容"
-                      v-model="toDoTaskItem.content"></textarea>
-        </div>
-        <div class="pirate-do-item-footer">
-            <div class="right-area">
-                <el-button type="danger"
-                           plain
-                           @click="handlerCancel">
-                    取消
-                </el-button>
-                <el-button type="success"
-                           plain
-                           @click="handlerConfirm">
-                    確認
-                </el-button>
-            </div>
-        </div>
-    </el-card>
+            <ToDoTaskComponent v-if="isShowTaskEdit"
+                               :work-index="workIndex"
+                               :card-index="cardIndex"
+                               :isCreat="true"
+                               @handlerCardEdited="handlerCardEdited">
+            </ToDoTaskComponent>
+        </el-collapse>
+    </div>
+    <div class="pirate-do-footer">
+        <button class="pirate-button" @click="showNewTaskArea">
+            <span>新增任務</span>
+        </button>
+    </div>
 </div>

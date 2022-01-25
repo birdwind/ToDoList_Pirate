@@ -1,7 +1,7 @@
 import Component from "vue-class-component";
 import { BaseVue } from "@/base/view/BaseVue";
 import { Action, Getter } from "vuex-class";
-import { AddWork, UpdateWorkList } from "@/store/types";
+import { AddWork, DeleteWork, UpdateFocusWork, UpdateWorkList } from "@/store/types";
 import { Watch } from "vue-property-decorator";
 import { ToDoWork, ToDoWorkInterface } from "@/model/ToDoWork";
 import { MyLogger } from "@/base/utils/MyLogger";
@@ -13,8 +13,14 @@ import Vuedraggable from "vuedraggable";
   },
 })
 export default class ToDoWorkListComponent extends BaseVue {
+  @Action("ToDo/updateFocusWork")
+  updateFocusWork!: UpdateFocusWork;
+
   @Action("ToDo/addWork")
   addWork!: AddWork;
+
+  @Action("ToDo/deleteWork")
+  deleteWork!: DeleteWork;
 
   @Action("ToDo/updateWorkList")
   updateWorkList!: UpdateWorkList;
@@ -30,17 +36,31 @@ export default class ToDoWorkListComponent extends BaseVue {
   isShowCreate = false;
   workCreator = new ToDoWork();
 
-  rightMenuObj = {
-    text: ["查看資料", "移除"],
-  };
+  mounted() {
+    this.$el.querySelectorAll(".el-avatar").forEach((element) => {
+      element.addEventListener(
+        "contextmenu",
+        (event) => {
+          const rightMenuData = [
+            {
+              title: `刪除`,
+              handler: this.handlerDeleteWork.bind(this, element),
+            },
+          ];
+          this.$root.$emit("contextmenu", { event, rightMenuData });
+        },
+        false
+      );
+    });
+  }
 
   @Watch("isShowCreate")
   watchIsShowCreate(after: boolean) {
     if (after) {
       this.$data.workCreator = new ToDoWork();
-      // this.$nextTick(() => {
-      //   this.$refs.work_creator_input.focus();
-      // });
+      this.$nextTick(() => {
+        this.$refs.work_creator_input.focus();
+      });
     }
   }
 
@@ -53,53 +73,19 @@ export default class ToDoWorkListComponent extends BaseVue {
     };
   }
 
-  get rightMenuBody() {
-    return document.body;
-  }
-
   handlerConfirmAddWork() {
     this.isShowCreate = false;
     this.addWork(this.workCreator);
-  }
-
-  handlerMove(evt: any, originalEvent: any) {
-    MyLogger.log(evt);
+    this.routerLink(`/todo/${this.workCreator.id}`);
   }
 
   handlerEndDrag() {
     this.updateWorkList();
   }
 
-  get temp() {
-    return {
-      this: this,
-      text: ["測試1", "測試2", "測試3", "測試4", "測試5", "測試6", "測試5", "測試6"],
-      handler: {
-        test1() {
-          MyLogger.log("test1");
-        },
-        test2() {
-          MyLogger.log("test2");
-        },
-        test3() {
-          MyLogger.log("test3");
-        },
-        test4() {
-          MyLogger.log("test4");
-        },
-        test5() {
-          MyLogger.log("test5");
-        },
-        test6() {
-          MyLogger.log("test6");
-        },
-        test7() {
-          MyLogger.log("test7");
-        },
-        test8() {
-          MyLogger.log("test8");
-        },
-      },
-    };
+  handlerDeleteWork(element: Element) {
+    const workId = element.getAttribute("workid");
+    this.updateFocusWork("首頁");
+    this.deleteWork(workId!);
   }
 }

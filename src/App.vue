@@ -4,6 +4,8 @@
     <AuthGuard>
       <router-view v-if="!isReload"></router-view>
     </AuthGuard>
+
+    <RightMenuComponent></RightMenuComponent>
   </div>
 </template>
 
@@ -19,11 +21,13 @@ import MenubarComponent from "@/components/Menubar/Menubar.component.vue";
 import { MyLogger } from "@/base/utils/MyLogger";
 import { Browser } from "@/base/utils/Browser";
 import { State } from "vuex-class";
+import RightMenuComponent from "@/components/RightMenu/RightMenu.component.vue";
 
 @Component({
   components: {
     AuthGuard,
     MenubarComponent,
+    RightMenuComponent,
   },
 })
 export default class App extends BaseVue {

@@ -1,16 +1,17 @@
 import Component from "vue-class-component";
-import ToDoListComponent from "@/components/ToDoList/ToDoList.component.vue";
+import ToDoCardComponent from "@/components/ToDoCard/ToDoCard.component.vue";
 import { BaseVue } from "@/base/view/BaseVue";
 import { MyLogger } from "@/base/utils/MyLogger";
 import Vuedraggable from "vuedraggable";
 import { Action, Getter } from "vuex-class";
-import { AddCard, UpdateCardList, UpdateTaskList, UpdateWorkList } from "@/store/types";
+import { AddCard, DeleteCard, UpdateCardList, UpdateFocusWork } from "@/store/types";
 import { ToDoWorkInterface } from "@/model/ToDoWork";
 import { Watch } from "vue-property-decorator";
+import { ToDoCard } from "@/model/ToDoCard";
 
 @Component({
   components: {
-    ToDoListComponent,
+    ToDoCardComponent,
     Vuedraggable,
   },
 })
@@ -19,9 +20,13 @@ export default class ToDo extends BaseVue {
   private workList!: ToDoWorkInterface[];
 
   @Action("ToDo/addCard")
-  private addCard!: AddCard;
+  addCard!: AddCard;
+
   @Action("ToDo/updateCardList")
   updateCardList!: UpdateCardList;
+
+  @Action("ToDo/deleteCard")
+  deleteCard!: DeleteCard;
 
   workId = "";
 
@@ -31,7 +36,12 @@ export default class ToDo extends BaseVue {
 
   current = "";
   isShowAddCardNameArea = false;
-  newCardName = "";
+  toDoCard: ToDoCard = new ToDoCard();
+
+  mounted() {
+    this.workId = this.$route.params.workId;
+    this.registerRightMenuForCard();
+  }
 
   @Watch("$route.params.workId")
   watchWorkID(after: string) {
@@ -79,7 +89,7 @@ export default class ToDo extends BaseVue {
 
   createCard() {
     if (!this.isShowAddCardNameArea) {
-      this.newCardName = "";
+      this.toDoCard = new ToDoCard();
       this.isShowAddCardNameArea = true;
       this.$nextTick(() => {
         this.$refs.card_name.focus();
@@ -88,14 +98,41 @@ export default class ToDo extends BaseVue {
   }
 
   addCardToVuex() {
-    if (this.newCardName !== "") {
+    if (this.toDoCard.name !== "") {
       this.addCard({
         workIndex: this.workPosition,
-        title: this.newCardName,
+        toDoCard: this.toDoCard,
       });
-      this.newCardName = "";
+      this.toDoCard = new ToDoCard();
     } else {
       this.isShowAddCardNameArea = false;
     }
+  }
+
+  registerRightMenuForCard() {
+    this.$el.querySelectorAll(".card-drop-area .pirate-do-card").forEach((element) => {
+      element.addEventListener(
+        "contextmenu",
+        (event) => {
+          const rightMenuData = [
+            {
+              title: `刪除`,
+              handler: this.handlerDeleteCard.bind(this, element),
+            },
+          ];
+          this.$root.$emit("contextmenu", { event, rightMenuData });
+        },
+        false
+      );
+    });
+  }
+
+  handlerDeleteCard(element: Element) {
+    MyLogger.log("temp");
+    const currentCardId = element.getAttribute("card-id");
+    this.deleteCard({
+      workIndex: this.workPosition,
+      cardId: currentCardId!,
+    });
   }
 }

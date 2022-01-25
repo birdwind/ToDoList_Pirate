@@ -6,21 +6,22 @@
                       :move="handlerMove"
                       @end="handlerEndDrag">
             <transition-group class="card-drop-area">
-                <ToDoListComponent v-for="(item, index) in cardList"
+                <ToDoCardComponent v-for="(item, index) in cardList"
                                    :key="item.name + index"
                                    :title="item.name"
                                    :task-list="item.task"
                                    :card-index="index"
-                                   :work-index="workPosition">
-                </ToDoListComponent>
+                                   :work-index="workPosition"
+                                   :card-id="item.id">
+                </ToDoCardComponent>
             </transition-group>
         </Vuedraggable>
 
-        <div class="pirate-do-list">
+        <div class="pirate-do-card">
             <div class="pirate-do-header" @click="createCard">
                 <span v-if="!isShowAddCardNameArea">新增卡片</span>
                 <input v-if="isShowAddCardNameArea"
-                       v-model="newCardName"
+                       v-model="toDoCard.name"
                        ref="card_name"
                        @blur="addCardToVuex"
                        v-on:keyup.enter="addCardToVuex"
