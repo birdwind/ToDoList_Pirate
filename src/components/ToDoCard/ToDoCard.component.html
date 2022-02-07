@@ -23,7 +23,8 @@
                                        :key="item.id"
                                        :work-index="workIndex"
                                        :card-index="cardIndex"
-                                       :to-do-task="item">
+                                       :to-do-task="item"
+                                       @contextmenu.prevent.native="onContextmenu">
                     </ToDoTaskComponent>
                 </transition-group>
             </Vuedraggable>

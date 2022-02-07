@@ -13,7 +13,7 @@
                         :content="item.name"
                         :key="item.id">
                     <router-link :to="`/todo/${item.id}`">
-                        <el-avatar :workId="item.id">{{ item.name.charAt(0) }}</el-avatar>
+                        <el-avatar :workId="item.id" @contextmenu.prevent.native="onContextmenu">{{ item.name.charAt(0) }}</el-avatar>
                     </router-link>
             </el-tooltip>
         </transition-group>

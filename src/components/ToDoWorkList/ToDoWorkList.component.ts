@@ -13,6 +13,7 @@ import Vuedraggable from "vuedraggable";
   },
 })
 export default class ToDoWorkListComponent extends BaseVue {
+  $contextmenu: any;
   @Action("ToDo/updateFocusWork")
   updateFocusWork!: UpdateFocusWork;
 
@@ -37,21 +38,21 @@ export default class ToDoWorkListComponent extends BaseVue {
   workCreator = new ToDoWork();
 
   mounted() {
-    this.$el.querySelectorAll(".el-avatar").forEach((element) => {
-      element.addEventListener(
-        "contextmenu",
-        (event) => {
-          const rightMenuData = [
-            {
-              title: `刪除`,
-              handler: this.handlerDeleteWork.bind(this, element),
-            },
-          ];
-          this.$root.$emit("contextmenu", { event, rightMenuData });
-        },
-        false
-      );
-    });
+    // this.$el.querySelectorAll(".el-avatar").forEach((element) => {
+    //   element.addEventListener(
+    //     "contextmenu",
+    //     (event) => {
+    //       const rightMenuData = [
+    //         {
+    //           title: `刪除`,
+    //           handler: this.handlerDeleteWork.bind(this, element),
+    //         },
+    //       ];
+    //       this.$root.$emit("contextmenu", { event, rightMenuData });
+    //     },
+    //     false
+    //   );
+    // });
   }
 
   @Watch("isShowCreate")
@@ -83,9 +84,22 @@ export default class ToDoWorkListComponent extends BaseVue {
     this.updateWorkList();
   }
 
-  handlerDeleteWork(element: Element) {
-    const workId = element.getAttribute("workid");
+  handlerDeleteWork(workId: string) {
     this.updateFocusWork("首頁");
-    this.deleteWork(workId!);
+    this.deleteWork(workId);
+  }
+
+  onContextmenu(event: any) {
+    this.$contextmenu({
+      items: [
+        {
+          label: "刪除1",
+          onClick: () => {
+            this.handlerDeleteWork(event.path[0].getAttribute("workid"));
+          },
+        },
+      ],
+      event,
+    });
   }
 }

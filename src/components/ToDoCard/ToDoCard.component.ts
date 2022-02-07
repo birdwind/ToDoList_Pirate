@@ -40,6 +40,8 @@ export default class ToDoCardComponent extends BaseVue {
     title_input: any;
   };
 
+  $contextmenu: any;
+
   activeNames = null;
 
   isShowCardEdit = false;
@@ -52,21 +54,21 @@ export default class ToDoCardComponent extends BaseVue {
   isShowTaskEdit = false;
 
   mounted() {
-    this.$el.querySelectorAll(".task-drop-area .to-do-task").forEach((element) => {
-      element.addEventListener(
-        "contextmenu",
-        (event) => {
-          const rightMenuData = [
-            {
-              title: `刪除`,
-              handler: this.handlerDeleteCard.bind(this, element),
-            },
-          ];
-          this.$root.$emit("contextmenu", { event, rightMenuData });
-        },
-        false
-      );
-    });
+    // this.$el.querySelectorAll(".task-drop-area .to-do-task").forEach((element) => {
+    //   element.addEventListener(
+    //     "contextmenu",
+    //     (event) => {
+    //       const rightMenuData = [
+    //         {
+    //           title: `刪除`,
+    //           handler: this.handlerDeleteCard.bind(this, element),
+    //         },
+    //       ];
+    //       this.$root.$emit("contextmenu", { event, rightMenuData });
+    //     },
+    //     false
+    //   );
+    // });
   }
 
   get dragOptions() {
@@ -124,6 +126,21 @@ export default class ToDoCardComponent extends BaseVue {
 
   handlerCardEdited() {
     this.isShowTaskEdit = false;
+  }
+
+  onContextmenu(event: any) {
+    this.$contextmenu({
+      items: [
+        {
+          label: "刪除2",
+          onClick: () => {
+            MyLogger.log(event.path[0]);
+            this.handlerDeleteCard(event.path[0]);
+          },
+        },
+      ],
+      event,
+    });
   }
 
   handlerDeleteCard(element: Element) {

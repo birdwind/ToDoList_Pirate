@@ -4,8 +4,6 @@
     <AuthGuard>
       <router-view v-if="!isReload"></router-view>
     </AuthGuard>
-
-    <RightMenuComponent></RightMenuComponent>
   </div>
 </template>
 
@@ -27,7 +25,6 @@ import RightMenuComponent from "@/components/RightMenu/RightMenu.component.vue";
   components: {
     AuthGuard,
     MenubarComponent,
-    RightMenuComponent,
   },
 })
 export default class App extends BaseVue {
