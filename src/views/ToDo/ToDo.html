@@ -12,7 +12,8 @@
                                    :task-list="item.task"
                                    :card-index="index"
                                    :work-index="workPosition"
-                                   :card-id="item.id">
+                                   :card-id="item.id"
+                                   @contextmenu.native="onContextmenu">
                 </ToDoCardComponent>
             </transition-group>
         </Vuedraggable>

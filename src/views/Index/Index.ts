@@ -5,7 +5,6 @@ import { Action, Getter } from "vuex-class";
 import { UpdateFocusWork } from "@/store/types";
 import { Watch } from "vue-property-decorator";
 import { ToDoWorkInterface } from "@/model/ToDoWork";
-import {MyLogger} from "@/base/utils/MyLogger";
 
 @Component({
   components: {
@@ -24,6 +23,7 @@ export default class Index extends BaseVue {
 
   mounted() {
     this.workId = this.$route.params.workId;
+    this.updateFocusWork("首頁");
   }
 
   @Watch("$route.params.workId")

@@ -28,6 +28,8 @@ export default class ToDo extends BaseVue {
   @Action("ToDo/deleteCard")
   deleteCard!: DeleteCard;
 
+  $contextmenu: any;
+
   workId = "";
 
   $refs!: {
@@ -40,7 +42,7 @@ export default class ToDo extends BaseVue {
 
   mounted() {
     this.workId = this.$route.params.workId;
-    this.registerRightMenuForCard();
+    // this.registerRightMenuForCard();
   }
 
   @Watch("$route.params.workId")
@@ -109,30 +111,48 @@ export default class ToDo extends BaseVue {
     }
   }
 
-  registerRightMenuForCard() {
-    this.$el.querySelectorAll(".card-drop-area .pirate-do-card").forEach((element) => {
-      element.addEventListener(
-        "contextmenu",
-        (event) => {
-          const rightMenuData = [
-            {
-              title: `刪除`,
-              handler: this.handlerDeleteCard.bind(this, element),
-            },
-          ];
-          this.$root.$emit("contextmenu", { event, rightMenuData });
-        },
-        false
-      );
-    });
-  }
+  // registerRightMenuForCard() {
+  //   this.$el.querySelectorAll(".card-drop-area .pirate-do-card").forEach((element) => {
+  //     element.addEventListener(
+  //       "contextmenu",
+  //       (event) => {
+  //         const rightMenuData = [
+  //           {
+  //             title: `刪除`,
+  //             handler: this.handlerDeleteCard.bind(this, element),
+  //           },
+  //         ];
+  //         this.$root.$emit("contextmenu", { event, rightMenuData });
+  //       },
+  //       false
+  //     );
+  //   });
+  // }
 
   handlerDeleteCard(element: Element) {
-    MyLogger.log("temp");
     const currentCardId = element.getAttribute("card-id");
     this.deleteCard({
       workIndex: this.workPosition,
       cardId: currentCardId!,
+    });
+  }
+
+  onContextmenu(event: any) {
+    this.$contextmenu({
+      items: [
+        {
+          label: "刪除",
+          onClick: () => {
+            event.path.forEach((item: any) => {
+              if (item.classList?.contains(`pirate-do-card`)) {
+                this.handlerDeleteCard(item);
+                return;
+              }
+            });
+          },
+        },
+      ],
+      event,
     });
   }
 }

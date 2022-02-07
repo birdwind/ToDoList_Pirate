@@ -24,7 +24,8 @@
                                        :work-index="workIndex"
                                        :card-index="cardIndex"
                                        :to-do-task="item"
-                                       @contextmenu.prevent.native="onContextmenu">
+                                       :task-id="item.id"
+                                       @contextmenu.native.stop="onContextmenu">
                     </ToDoTaskComponent>
                 </transition-group>
             </Vuedraggable>

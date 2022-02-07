@@ -37,23 +37,7 @@ export default class ToDoWorkListComponent extends BaseVue {
   isShowCreate = false;
   workCreator = new ToDoWork();
 
-  mounted() {
-    // this.$el.querySelectorAll(".el-avatar").forEach((element) => {
-    //   element.addEventListener(
-    //     "contextmenu",
-    //     (event) => {
-    //       const rightMenuData = [
-    //         {
-    //           title: `刪除`,
-    //           handler: this.handlerDeleteWork.bind(this, element),
-    //         },
-    //       ];
-    //       this.$root.$emit("contextmenu", { event, rightMenuData });
-    //     },
-    //     false
-    //   );
-    // });
-  }
+  mounted() {}
 
   @Watch("isShowCreate")
   watchIsShowCreate(after: boolean) {
@@ -93,9 +77,10 @@ export default class ToDoWorkListComponent extends BaseVue {
     this.$contextmenu({
       items: [
         {
-          label: "刪除1",
+          label: "刪除",
           onClick: () => {
             this.handlerDeleteWork(event.path[0].getAttribute("workid"));
+            this.routerLink("/home");
           },
         },
       ],

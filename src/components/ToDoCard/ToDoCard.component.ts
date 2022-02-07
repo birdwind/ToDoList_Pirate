@@ -132,10 +132,15 @@ export default class ToDoCardComponent extends BaseVue {
     this.$contextmenu({
       items: [
         {
-          label: "刪除2",
+          label: "刪除",
           onClick: () => {
-            MyLogger.log(event.path[0]);
-            this.handlerDeleteCard(event.path[0]);
+            event.path.forEach((item: any) => {
+              if(item.classList?.contains(`to-do-task`)){
+                MyLogger.log(item);
+                this.handlerDeleteCard(item);
+                return;
+              }
+            });
           },
         },
       ],
@@ -144,11 +149,11 @@ export default class ToDoCardComponent extends BaseVue {
   }
 
   handlerDeleteCard(element: Element) {
-    const currentCardId = element.getAttribute("card-id");
+    const currentTaskId = element.getAttribute("task-id");
     this.deleteTask({
       workIndex: this.workIndex,
       cardIndex: this.cardIndex,
-      taskId: "",
+      taskId: currentTaskId!,
     });
   }
 }
