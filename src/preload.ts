@@ -1,3 +1,3 @@
-import { ipcRenderer } from "electron";
+import { contextBridge, ipcRenderer, IpcRendererEvent } from "electron";
 
 window.ipcRenderer = ipcRenderer;

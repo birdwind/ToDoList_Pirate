@@ -19,7 +19,6 @@ import MenubarComponent from "@/components/Menubar/Menubar.component.vue";
 import { MyLogger } from "@/base/utils/MyLogger";
 import { Browser } from "@/base/utils/Browser";
 import { State } from "vuex-class";
-import RightMenuComponent from "@/components/RightMenu/RightMenu.component.vue";
 
 @Component({
   components: {
@@ -51,8 +50,10 @@ export default class App extends BaseVue {
       this.isReady = true;
     }
 
-    // await this.apis.reporterApi.reporterGetAll();
-    // await this.apis.reporterApi.reporterGet("AB1200623046-009-13");
+    window.ipcRenderer.on("getCurrentUrl", (event, arg) => {
+      const temp = location.href as string;
+      window.ipcRenderer.send("currentUrl", temp);
+    });
   }
 }
 </script>

@@ -135,7 +135,7 @@ export default class ToDoCardComponent extends BaseVue {
           label: "刪除",
           onClick: () => {
             event.path.forEach((item: any) => {
-              if(item.classList?.contains(`to-do-task`)){
+              if (item.classList?.contains(`to-do-task`)) {
                 MyLogger.log(item);
                 this.handlerDeleteCard(item);
                 return;

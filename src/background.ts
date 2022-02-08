@@ -5,6 +5,9 @@ import { app, protocol, BrowserWindow, ipcMain } from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS_DEVTOOLS } from "electron-devtools-installer";
 import * as path from "path";
+import { close, currentUrl, maximize, minimize } from "@/electron/ipcHandler";
+import { registerShortcut } from "@/electron/shortcutHandler";
+import { MyLogger } from "@/base/utils/MyLogger";
 const isDevelopment = process.env.NODE_ENV !== "production";
 
 // Scheme must be registered before the app is ready
@@ -12,11 +15,12 @@ protocol.registerSchemesAsPrivileged([{ scheme: "app", privileges: { secure: tru
 
 async function createWindow() {
   // Create the browser window.
-  const win = new BrowserWindow({
+  const electron = new BrowserWindow({
     width: 800,
     height: 600,
     minWidth: 800,
     frame: false,
+    show: false,
     titleBarOverlay: true,
     webPreferences: {
       // devTools: false,
@@ -30,14 +34,17 @@ async function createWindow() {
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
-    await win.loadURL(process.env.WEBPACK_DEV_SERVER_URL as string);
+    await electron.loadURL(process.env.WEBPACK_DEV_SERVER_URL as string);
     if (!process.env.IS_TEST) {
-      win.webContents.openDevTools();
+      electron.webContents.openDevTools();
     }
+    electron.once("ready-to-show", () => {
+      electron.show();
+    });
   } else {
     createProtocol("app");
     // Load the index.html when not in development
-    win.loadURL("app://./index.html");
+    electron.loadURL("app://./index.html");
   }
 }
 
@@ -66,6 +73,13 @@ app.on("ready", async () => {
     // Install Vue Devtools
     try {
       await installExtension(VUEJS_DEVTOOLS);
+      registerShortcut("CommandOrControl+F1", async () => {
+        const mainWindow = BrowserWindow.getAllWindows()[0];
+        const mainContent = mainWindow.webContents;
+        if (mainContent) {
+          mainContent.send("getCurrentUrl");
+        }
+      });
     } catch (e) {
       console.error("Vue Devtools failed to install:", e.toString());
     }
@@ -88,26 +102,25 @@ if (isDevelopment) {
   }
 }
 
-ipcMain.on("minimize", () => {
-  const win = BrowserWindow.getFocusedWindow();
-  win.minimize();
-});
+minimize();
+maximize();
+close();
 
-ipcMain.on("maximize", () => {
-  const win = BrowserWindow.getFocusedWindow();
-  if (win.isMaximized()) {
-    win.unmaximize();
-  } else {
-    win.maximize();
-  }
-});
-
-ipcMain.on("close", () => {
-  const win = BrowserWindow.getFocusedWindow();
-  win.close();
-});
-
-ipcMain.on("fullScreen", () => {
-  const win = BrowserWindow.getFocusedWindow();
-  win.setFullScreen(!win.isFullScreen());
+currentUrl().then(async (urlString: string) => {
+  MyLogger.log(urlString);
+  const child = new BrowserWindow({
+    parent: BrowserWindow.getAllWindows()[0],
+    width: 400,
+    height: 300,
+    minWidth: 400,
+    frame: false,
+    titleBarOverlay: true,
+    webPreferences: {
+      nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION as unknown as boolean,
+      contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
+      preload: path.join(__dirname, "preload.js"), // 指定preload.js脚本
+    },
+  });
+  await child.loadURL(urlString);
+  child.webContents.openDevTools();
 });

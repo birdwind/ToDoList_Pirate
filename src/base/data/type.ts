@@ -1,0 +1,1 @@
+type AnyAsyncAction = () => Promise<void>;
