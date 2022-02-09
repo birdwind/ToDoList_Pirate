@@ -20,6 +20,8 @@ const environment = {
   connectMode: env.VUE_APP_ConnectMode,
 };
 
+const dev = process.env.NODE_ENV === 'development' ? '_dev' : ''
+
 console.log(environment);
 
 const proxyHost = environment.apiHost;
@@ -84,11 +86,72 @@ module.exports = {
       },
     },
     devtool: "source-map",
+    resolve: {
+      // alias: {
+      //   '*': path.resolve(
+      //       __dirname, './src'
+      //   ),
+      //   '@': path.resolve(
+      //       __dirname, './src/components'
+      //   ),
+      //   '#': path.resolve(
+      //       __dirname, './src/helpers'
+      //   ),
+      //   '%': path.resolve(
+      //       __dirname, './src/views'
+      //   ),
+      //   '&': path.resolve(
+      //       __dirname, './src/plugins'
+      //   ),
+      //   semantic: path.resolve(
+      //       __dirname, './semantic'
+      //   )
+      // }
+    },
   },
   pluginOptions: {
     electronBuilder: {
       preload: "src/preload.ts",
       nodeIntegration: true,
+      outputDir: "electron-builder-output",
+      builderOptions: {
+        productName: "Pirate",
+        appId: "com.birdwind.pirate.todolist" + dev,
+        artifactName: '${name}.${ext}', // 檔案名稱樣板，有 ESLint 記得關掉
+        copyright: "Copyright © 2022 by PirateShip & Powered By BirdWind",
+        win: {
+          target: [{
+            target: 'nsis', // 檔案類型
+            arch: ["x64", "ia32"] // 檔案位元，越多類型檔案越大
+          }],
+          verifyUpdateCodeSignature: false
+        },
+        dmg: {},
+        linux: {
+          category: "Office",
+          target: "AppImage",
+          // arch: ["armv7l"]
+        },
+        mac: {
+          // category: "public.app-category.productivity",
+          target: [
+            "dmg",
+            "zip"
+          ]
+        },
+        files: ['**/*'],
+        // extraResources: {
+        //   from: 'resources/',
+        //   to: './'
+        // },
+        nsis: {
+          oneClick: false,
+          perMachine: true,
+          allowToChangeInstallationDirectory: true,
+          createDesktopShortcut: true,
+          createStartMenuShortcut: true
+        },
+      }
     },
   },
 };

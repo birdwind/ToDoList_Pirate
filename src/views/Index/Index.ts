@@ -23,24 +23,28 @@ export default class Index extends BaseVue {
 
   mounted() {
     this.workId = this.$route.params.workId;
-    this.updateFocusWork("首頁");
+    this.updateTitle();
   }
 
   @Watch("$route.params.workId")
   watchWorkID(after: string) {
     if (this.workId !== after) {
       this.$data.workId = this.$route.params.workId;
-      let isHome = true;
-      this.workList.forEach((item, index) => {
-        if (item.id === this.workId) {
-          isHome = false;
-          this.updateFocusWork(item.name);
-          return;
-        }
-      });
-      if (isHome) {
-        this.updateFocusWork("首頁");
+      this.updateTitle();
+    }
+  }
+
+  updateTitle() {
+    let isHome = true;
+    this.workList.forEach((item, index) => {
+      if (item.id === this.workId) {
+        isHome = false;
+        this.updateFocusWork(item.name);
+        return;
       }
+    });
+    if (isHome) {
+      this.updateFocusWork("首頁");
     }
   }
 }

@@ -15,7 +15,7 @@ export default new Vuex.Store({
   plugins: [
     createPersistedState({
       key: process.env.VUE_APP_AppName,
-      storage: window.sessionStorage,
+      storage: window.localStorage,
     }),
   ],
   modules: {

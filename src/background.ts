@@ -1,64 +1,39 @@
 // @ts-nocheck
 "use strict";
 
-import { app, protocol, BrowserWindow, Tray, nativeImage } from "electron";
+import {app, protocol, BrowserWindow, Tray, nativeImage, Menu, Notification, ipcMain} from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS_DEVTOOLS } from "electron-devtools-installer";
 import * as path from "path";
-import { close, maximize, minimize } from "@/electron/ipcHandler";
-import { registerShortcut } from "@/electron/shortcutHandler";
+import { close, hideToTray, maximize, minimize } from "@/electron/ipcHandler";
 import ElectronStore from "electron-store";
+import { MyLogger } from "@/base/utils/MyLogger";
+import { registerShortcut } from "@/electron/shortcutHandler";
 
 const isDevelopment = process.env.NODE_ENV !== "production";
-const hostURL = process.env.WEBPACK_DEV_SERVER_URL as string;
-const publicPath = isDevelopment ? "public" : "";
-const iconPath = path.join(__dirname, publicPath, "icon_logo.jpg");
+const appName = process.env.VUE_APP_Title;
+const iconPath = path.join(__static, "images", "icon_logo.png");
+
 const icon = nativeImage.createFromPath(iconPath);
 
 const local = new ElectronStore({
   accessPropertiesByDotNotation: false,
 });
+const isMac = process.platform === "darwin";
 
 let mainWindow: any;
-let tray: any;
+const childWindow: Array = [];
+let tray = null;
+
+const width = 800;
+const height = 600;
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([{ scheme: "app", privileges: { secure: true, standard: true } }]);
 
-async function createWindow() {
-  // Create the browser window.
-  mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
-    minWidth: 800,
-    frame: false,
-    show: false,
-    titleBarOverlay: true,
-    webPreferences: {
-      // devTools: false,
-      // Use pluginOptions.nodeIntegration, leave this alone
-      // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
-      nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION as unknown as boolean,
-      contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
-      preload: path.join(__dirname, "preload.js"), // 指定preload.js脚本
-    },
-  });
-
-  if (process.env.WEBPACK_DEV_SERVER_URL) {
-    // Load the url of the dev server if in development mode
-    await mainWindow.loadURL(hostURL);
-    if (!process.env.IS_TEST) {
-      mainWindow.webContents.openDevTools();
-    }
-    mainWindow.once("ready-to-show", () => {
-      mainWindow.show();
-    });
-  } else {
-    createProtocol("app");
-    // Load the index.html when not in development
-    mainWindow.loadURL("app://./index.html");
-  }
-}
+app.on("ready", async () => {
+  await setup();
+});
 
 // Quit when all windows are closed.
 app.on("window-all-closed", () => {
@@ -77,46 +52,218 @@ app.on("activate", () => {
   }
 });
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
-app.on("ready", async () => {
+app.setAppUserModelId(appName);
+
+function baseUrl() {
+  if (isDevelopment) {
+    return process.env.WEBPACK_DEV_SERVER_URL as string;
+  } else {
+    return `app://./index.html`;
+  }
+}
+
+async function setup() {
+  ElectronStore.initRenderer();
+  await installDevTools();
+  await createWindow();
+  await createTray();
+  shortcut();
+  ipcMainHandler();
+  createNotification("測試標題", "測試副標題", "測試內容");
+}
+
+async function createWindow() {
+  const mainWindowIcon = icon.resize({
+    width: 64,
+    height: 64,
+  });
+
+  mainWindow = new BrowserWindow({
+    width: width,
+    height: height,
+    icon: mainWindowIcon,
+    frame: false,
+    show: false,
+    titleBarOverlay: true,
+    webPreferences: {
+      // devTools: false,
+      // Use pluginOptions.nodeIntegration, leave this alone
+      // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
+      nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION as unknown as boolean,
+      contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
+      preload: path.join(__dirname, "preload.js"), // 指定preload.js脚本
+    },
+  });
+
+  if (!process.env.IS_TEST) {
+    mainWindow.webContents.openDevTools();
+  }
+  if (!process.env.WEBPACK_DEV_SERVER_URL) {
+    createProtocol("app");
+  }
+
+  mainWindow.once("ready-to-show", () => {
+    mainWindow.setMinimumSize(width, height);
+    mainWindow.show();
+  });
+
+  await mainWindow.loadURL(baseUrl());
+
+  mainWindow.setMenu(null);
+}
+
+async function createChildWindow(
+  width: number,
+  height: number,
+  parentWindow: any = null,
+  url: string = mainWindow.webContents.getURL()
+) {
+  const child = new BrowserWindow({
+    parent: parentWindow,
+    width: width,
+    height: height,
+    frame: false,
+    titleBarOverlay: true,
+    webPreferences: {
+      nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION as unknown as boolean,
+      contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
+      preload: path.join(__dirname, "preload.js"), // 指定preload.js脚本
+    },
+  });
+
+  await child.loadURL(url);
+
+  if (!process.env.IS_TEST) {
+    child.webContents.openDevTools();
+  }
+
+  return child;
+}
+
+async function createTray() {
+  const trayIcon = icon.resize({
+    width: 16,
+    height: 16,
+  });
+  tray = new Tray(trayIcon);
+  await setTrayMenu();
+  tray.setToolTip(appName);
+  tray.on("double-click", async () => {
+    if (mainWindow && !mainWindow.isVisible()) {
+      mainWindow.restore();
+      mainWindow.show();
+      await setTrayMenu();
+    }
+  });
+}
+
+async function showMainWindow() {
+  mainWindow.show();
+  await setTrayMenu();
+}
+
+async function hideMainWindow() {
+  mainWindow.hide();
+  await setTrayMenu();
+}
+
+async function exitMainWindow() {
+  app.quit();
+}
+
+async function setTrayMenu() {
+  const showHideText = mainWindow.isVisible() ? "隱藏" : "顯示";
+  const menu = Menu.buildFromTemplate([
+    {
+      label: showHideText,
+      click: () => {
+        if (mainWindow.isVisible()) {
+          hideMainWindow();
+        } else {
+          showMainWindow();
+        }
+      },
+    },
+    {
+      label: "離開",
+      click: () => {
+        exitMainWindow();
+      },
+    },
+  ]);
+
+  tray.setContextMenu(menu);
+
+  if (isMac) {
+    app.dock.setMenu(menu);
+  }
+}
+
+function createNotification(title: string, subTitle: string, contnet: string) {
+  const notificationIcon = icon.resize({
+    width: 64,
+    height: 64,
+  });
+  const notification = new Notification({
+    title: title,
+    subtitle: subTitle, //macOS only
+    body: contnet,
+    silent: true,
+    icon: notificationIcon,
+    timeoutType: "default",
+  });
+
+  notification.show();
+
+  return notification;
+}
+
+function shortcut() {
+  registerShortcut("CommandOrControl+F1", async () => {
+    childWindow.push(createChildWindow(width, height, mainWindow));
+  });
+}
+
+async function installDevTools() {
   if (isDevelopment && !process.env.IS_TEST) {
-    // Install Vue Devtools
     try {
       await installExtension(VUEJS_DEVTOOLS);
-      registerShortcut("CommandOrControl+F1", async () => {
-        const mainWindow = BrowserWindow.getAllWindows()[0];
-        const mainContent = mainWindow.webContents;
-        const child = new BrowserWindow({
-          parent: BrowserWindow.getAllWindows()[0],
-          width: 400,
-          height: 300,
-          minWidth: 400,
-          frame: false,
-          titleBarOverlay: true,
-          webPreferences: {
-            nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION as unknown as boolean,
-            contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
-            preload: path.join(__dirname, "preload.js"), // 指定preload.js脚本
-          },
-        });
-        await child.loadURL(mainContent.getURL());
-        child.webContents.openDevTools();
-        // if (mainContent) {
-        //   mainContent.send("getCurrentUrl");
-        // }
-      });
     } catch (e) {
-      console.error("Vue Devtools failed to install:", e.toString());
+      MyLogger.log("Vue開發插件安裝失敗", e.toString());
     }
   }
-  createWindow();
-});
+}
 
-app.whenReady().then(async () => {
-  await setup();
-});
+function ipcMainHandler() {
+  ipcMain.on("minimize", () => {
+    const win = BrowserWindow.getFocusedWindow();
+    win?.minimize();
+  });
+
+  ipcMain.on("maximize", () => {
+    const win = BrowserWindow.getFocusedWindow();
+    if (win?.isMaximized()) {
+      win?.unmaximize();
+    } else {
+      win?.maximize();
+    }
+  });
+
+  ipcMain.on("hideToTray", () => {
+    const win = BrowserWindow.getFocusedWindow();
+    win?.hide();
+    setTrayMenu();
+  });
+
+  ipcMain.on("fullScreen", () => {
+    const win = BrowserWindow.getFocusedWindow();
+    win?.setFullScreen(!win?.isFullScreen());
+  });
+
+  ipcMain.on("currentUrl", (event, url: string) => {
+    MyLogger.log("輸出", url);
+  });
+}
 
 // Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {
@@ -132,22 +279,3 @@ if (isDevelopment) {
     });
   }
 }
-
-minimize();
-maximize();
-close();
-
-async function createTray (){
-  const trayIcon = icon.resize({
-    width: 16,
-    height: 16,
-  });
-  const tray = new Tray(trayIcon);
-  tray.setToolTip(process.env.VUE_APP_AppName as string);
-};
-
-async function setup() {
-  ElectronStore.initRenderer();
-  await createWindow();
-  await createTray();
-};
