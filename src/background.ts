@@ -1,21 +1,33 @@
 // @ts-nocheck
 "use strict";
 
-import { app, protocol, BrowserWindow, ipcMain } from "electron";
+import { app, protocol, BrowserWindow, Tray, nativeImage } from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS_DEVTOOLS } from "electron-devtools-installer";
 import * as path from "path";
-import { close, currentUrl, maximize, minimize } from "@/electron/ipcHandler";
+import { close, maximize, minimize } from "@/electron/ipcHandler";
 import { registerShortcut } from "@/electron/shortcutHandler";
-import { MyLogger } from "@/base/utils/MyLogger";
+import ElectronStore from "electron-store";
+
 const isDevelopment = process.env.NODE_ENV !== "production";
+const hostURL = process.env.WEBPACK_DEV_SERVER_URL as string;
+const publicPath = isDevelopment ? "public" : "";
+const iconPath = path.join(__dirname, publicPath, "icon_logo.jpg");
+const icon = nativeImage.createFromPath(iconPath);
+
+const local = new ElectronStore({
+  accessPropertiesByDotNotation: false,
+});
+
+let mainWindow: any;
+let tray: any;
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([{ scheme: "app", privileges: { secure: true, standard: true } }]);
 
 async function createWindow() {
   // Create the browser window.
-  const electron = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
     minWidth: 800,
@@ -34,17 +46,17 @@ async function createWindow() {
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
-    await electron.loadURL(process.env.WEBPACK_DEV_SERVER_URL as string);
+    await mainWindow.loadURL(hostURL);
     if (!process.env.IS_TEST) {
-      electron.webContents.openDevTools();
+      mainWindow.webContents.openDevTools();
     }
-    electron.once("ready-to-show", () => {
-      electron.show();
+    mainWindow.once("ready-to-show", () => {
+      mainWindow.show();
     });
   } else {
     createProtocol("app");
     // Load the index.html when not in development
-    electron.loadURL("app://./index.html");
+    mainWindow.loadURL("app://./index.html");
   }
 }
 
@@ -76,15 +88,34 @@ app.on("ready", async () => {
       registerShortcut("CommandOrControl+F1", async () => {
         const mainWindow = BrowserWindow.getAllWindows()[0];
         const mainContent = mainWindow.webContents;
-        if (mainContent) {
-          mainContent.send("getCurrentUrl");
-        }
+        const child = new BrowserWindow({
+          parent: BrowserWindow.getAllWindows()[0],
+          width: 400,
+          height: 300,
+          minWidth: 400,
+          frame: false,
+          titleBarOverlay: true,
+          webPreferences: {
+            nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION as unknown as boolean,
+            contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
+            preload: path.join(__dirname, "preload.js"), // 指定preload.js脚本
+          },
+        });
+        await child.loadURL(mainContent.getURL());
+        child.webContents.openDevTools();
+        // if (mainContent) {
+        //   mainContent.send("getCurrentUrl");
+        // }
       });
     } catch (e) {
       console.error("Vue Devtools failed to install:", e.toString());
     }
   }
   createWindow();
+});
+
+app.whenReady().then(async () => {
+  await setup();
 });
 
 // Exit cleanly on request from parent process in development mode.
@@ -106,21 +137,17 @@ minimize();
 maximize();
 close();
 
-currentUrl().then(async (urlString: string) => {
-  MyLogger.log(urlString);
-  const child = new BrowserWindow({
-    parent: BrowserWindow.getAllWindows()[0],
-    width: 400,
-    height: 300,
-    minWidth: 400,
-    frame: false,
-    titleBarOverlay: true,
-    webPreferences: {
-      nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION as unknown as boolean,
-      contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
-      preload: path.join(__dirname, "preload.js"), // 指定preload.js脚本
-    },
+async function createTray (){
+  const trayIcon = icon.resize({
+    width: 16,
+    height: 16,
   });
-  await child.loadURL(urlString);
-  child.webContents.openDevTools();
-});
+  const tray = new Tray(trayIcon);
+  tray.setToolTip(process.env.VUE_APP_AppName as string);
+};
+
+async function setup() {
+  ElectronStore.initRenderer();
+  await createWindow();
+  await createTray();
+};
