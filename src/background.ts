@@ -1,7 +1,7 @@
 // @ts-nocheck
 "use strict";
 
-import {app, protocol, BrowserWindow, Tray, nativeImage, Menu, Notification, ipcMain} from "electron";
+import { app, protocol, BrowserWindow, Tray, nativeImage, Menu, Notification, ipcMain } from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS_DEVTOOLS } from "electron-devtools-installer";
 import * as path from "path";
@@ -95,10 +95,11 @@ async function createWindow() {
     },
   });
 
-  if (!process.env.IS_TEST) {
-    mainWindow.webContents.openDevTools();
-  }
-  if (!process.env.WEBPACK_DEV_SERVER_URL) {
+  if (process.env.WEBPACK_DEV_SERVER_URL) {
+    if (!process.env.IS_TEST) {
+      mainWindow.webContents.openDevTools();
+    }
+  } else {
     createProtocol("app");
   }
 
@@ -133,8 +134,10 @@ async function createChildWindow(
 
   await child.loadURL(url);
 
-  if (!process.env.IS_TEST) {
-    child.webContents.openDevTools();
+  if (process.env.WEBPACK_DEV_SERVER_URL) {
+    if (!process.env.IS_TEST) {
+      child.webContents.openDevTools();
+    }
   }
 
   return child;
