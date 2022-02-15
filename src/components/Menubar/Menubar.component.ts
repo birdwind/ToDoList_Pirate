@@ -16,6 +16,6 @@ export default class MenubarComponent extends BaseVue {
     window.ipcRenderer.send("maximize");
   }
   private hideToTray() {
-    window.ipcRenderer.send("hideToTray");
+    window.ipcRenderer.send("closeHide");
   }
 }

@@ -21,12 +21,12 @@ const local = new ElectronStore({
 });
 const isMac = process.platform === "darwin";
 
-let mainWindow: any;
-const childWindow: Array = [];
+let mainWindowId: any;
 let tray = null;
 
 const width = 800;
 const height = 600;
+const BrowserWindowMap = new Map<number, BrowserWindow>();
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([{ scheme: "app", privileges: { secure: true, standard: true } }]);
@@ -78,7 +78,7 @@ async function createWindow() {
     height: 64,
   });
 
-  mainWindow = new BrowserWindow({
+  const browserWindow = new BrowserWindow({
     width: width,
     height: height,
     icon: mainWindowIcon,
@@ -97,27 +97,29 @@ async function createWindow() {
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     if (!process.env.IS_TEST) {
-      mainWindow.webContents.openDevTools();
+      browserWindow.webContents.openDevTools();
     }
   } else {
     createProtocol("app");
   }
 
-  mainWindow.once("ready-to-show", () => {
-    mainWindow.setMinimumSize(width, height);
-    mainWindow.show();
+  await browserWindow.loadURL(baseUrl());
+  browserWindow.setMenu(null);
+
+  browserWindow.once("ready-to-show", () => {
+    browserWindow.setMinimumSize(width, height);
+    browserWindow.show();
   });
 
-  await mainWindow.loadURL(baseUrl());
-
-  mainWindow.setMenu(null);
+  BrowserWindowMap.set(browserWindow.id, browserWindow);
+  mainWindowId = browserWindow.id;
 }
 
 async function createChildWindow(
   width: number,
   height: number,
   parentWindow: any = null,
-  url: string = mainWindow.webContents.getURL()
+  url: string = BrowserWindowMap.get(mainWindowId).webContents.getURL()
 ) {
   const child = new BrowserWindow({
     parent: parentWindow,
@@ -140,10 +142,11 @@ async function createChildWindow(
     }
   }
 
-  return child;
+  BrowserWindowMap.set(child.id, child);
 }
 
 async function createTray() {
+  const mainWindow = BrowserWindowMap.get(mainWindowId);
   const trayIcon = icon.resize({
     width: 16,
     height: 16,
@@ -161,12 +164,12 @@ async function createTray() {
 }
 
 async function showMainWindow() {
-  mainWindow.show();
+  BrowserWindowMap.get(mainWindowId).show();
   await setTrayMenu();
 }
 
 async function hideMainWindow() {
-  mainWindow.hide();
+  BrowserWindowMap.get(mainWindowId).hide();
   await setTrayMenu();
 }
 
@@ -175,12 +178,12 @@ async function exitMainWindow() {
 }
 
 async function setTrayMenu() {
-  const showHideText = mainWindow.isVisible() ? "隱藏" : "顯示";
+  const showHideText = BrowserWindowMap.get(mainWindowId).isVisible() ? "隱藏" : "顯示";
   const menu = Menu.buildFromTemplate([
     {
       label: showHideText,
       click: () => {
-        if (mainWindow.isVisible()) {
+        if (BrowserWindowMap.get(mainWindowId).isVisible()) {
           hideMainWindow();
         } else {
           showMainWindow();
@@ -223,7 +226,7 @@ function createNotification(title: string, subTitle: string, contnet: string) {
 
 function shortcut() {
   registerShortcut("CommandOrControl+F1", async () => {
-    childWindow.push(createChildWindow(width, height, mainWindow));
+    createChildWindow(width, height, BrowserWindowMap.get(mainWindowId));
   });
 }
 
@@ -252,10 +255,20 @@ function ipcMainHandler() {
     }
   });
 
-  ipcMain.on("hideToTray", () => {
+  ipcMain.on("closeHide", () => {
     const win = BrowserWindow.getFocusedWindow();
-    win?.hide();
-    setTrayMenu();
+    if (win?.id === mainWindowId) {
+      if (BrowserWindowMap.size > 1) {
+        MyLogger.log("大於1");
+        win?.hide();
+        setTrayMenu();
+      } else {
+        MyLogger.log("小於等於1");
+      }
+    } else {
+      BrowserWindowMap.delete(win?.id);
+      win?.close();
+    }
   });
 
   ipcMain.on("fullScreen", () => {
