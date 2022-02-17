@@ -81,6 +81,8 @@ async function createWindow() {
   const browserWindow = new BrowserWindow({
     width: width,
     height: height,
+    minWidth: width,
+    minHeight: height,
     icon: mainWindowIcon,
     frame: false,
     show: false,

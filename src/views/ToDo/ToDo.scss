@@ -1,9 +1,12 @@
 .to-do {
   display: block;
+  width: 100%;
+  min-width: fit-content;
 
   .to-do-wrapper {
     padding: 12px;
     display: flex;
+    width: fit-content;
 
     .card-drop-area {
       display: flex;
