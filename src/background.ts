@@ -260,7 +260,7 @@ function ipcMainHandler() {
     if (win?.id === mainWindowId) {
       if (BrowserWindowMap.size > 1) {
         win.webContents.send("closeHaveChild");
-        ipcMain.on("closeChild", (event, args) => {
+        ipcMain.once("closeChild", (event, args) => {
           BrowserWindowMap.forEach((item) => {
             if (item.id !== mainWindowId) {
               item.close();
@@ -284,6 +284,7 @@ function ipcMainHandler() {
     win?.setFullScreen(!win?.isFullScreen());
   });
 
+  //url = http://localhost:8080/
   ipcMain.on("currentUrl", (event, url: string) => {
     MyLogger.log("輸出", url);
   });
