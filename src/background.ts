@@ -1,11 +1,10 @@
 // @ts-nocheck
 "use strict";
 
-import { app, protocol, BrowserWindow, Tray, nativeImage, Menu, Notification, ipcMain } from "electron";
+import { app, BrowserWindow, ipcMain, ipcRenderer, Menu, nativeImage, Notification, protocol, Tray } from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS_DEVTOOLS } from "electron-devtools-installer";
 import * as path from "path";
-import { close, hideToTray, maximize, minimize } from "@/electron/ipcHandler";
 import ElectronStore from "electron-store";
 import { MyLogger } from "@/base/utils/MyLogger";
 import { registerShortcut } from "@/electron/shortcutHandler";
@@ -86,7 +85,6 @@ async function createWindow() {
     icon: mainWindowIcon,
     frame: false,
     show: false,
-    titleBarOverlay: true,
     webPreferences: {
       // devTools: false,
       // Use pluginOptions.nodeIntegration, leave this alone
@@ -165,21 +163,21 @@ async function createTray() {
   });
 }
 
-async function showMainWindow() {
+function showMainWindow() {
   BrowserWindowMap.get(mainWindowId).show();
-  await setTrayMenu();
+  setTrayMenu();
 }
 
-async function hideMainWindow() {
+function hideMainWindow() {
   BrowserWindowMap.get(mainWindowId).hide();
-  await setTrayMenu();
+  setTrayMenu();
 }
 
-async function exitMainWindow() {
+function exitMainWindow() {
   app.quit();
 }
 
-async function setTrayMenu() {
+function setTrayMenu() {
   const showHideText = BrowserWindowMap.get(mainWindowId).isVisible() ? "隱藏" : "顯示";
   const menu = Menu.buildFromTemplate([
     {
@@ -228,7 +226,7 @@ function createNotification(title: string, subTitle: string, contnet: string) {
 
 function shortcut() {
   registerShortcut("CommandOrControl+F1", async () => {
-    createChildWindow(width, height, BrowserWindowMap.get(mainWindowId));
+    createChildWindow(width, height);
   });
 }
 
@@ -261,12 +259,20 @@ function ipcMainHandler() {
     const win = BrowserWindow.getFocusedWindow();
     if (win?.id === mainWindowId) {
       if (BrowserWindowMap.size > 1) {
-        MyLogger.log("大於1");
-        win?.hide();
-        setTrayMenu();
+        win.webContents.send("closeHaveChild");
+        ipcMain.on("closeChild", (event, args) => {
+          BrowserWindowMap.forEach((item) => {
+            if (item.id !== mainWindowId) {
+              item.close();
+              BrowserWindowMap.delete(item.id);
+            }
+          });
+          win?.hide();
+        });
       } else {
-        MyLogger.log("小於等於1");
+        win?.hide();
       }
+      setTrayMenu();
     } else {
       BrowserWindowMap.delete(win?.id);
       win?.close();
